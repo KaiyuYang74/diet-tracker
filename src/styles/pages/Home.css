@@ -1,0 +1,262 @@
+.home-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  width: 90%;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.chart-container {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(350px, 1fr));
+  gap: 20px;
+  justify-content: center;
+  width: 100%;
+  max-width: 1100px;
+}
+
+@media (max-width: 800px) {
+  .chart-container {
+    grid-template-columns: repeat(1, minmax(350px, 1fr));
+  }
+}
+
+.chart-section,
+.dashboard {
+  min-width: 350px;
+  max-width: 500px;
+  flex-grow: 1;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 2px 2px 5px rgba(50, 133, 87, 0.1);
+  text-align: center;
+  height: 350px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 图表标题统一样式 */
+.chart-section h3,
+.dashboard h2 {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+/* 图表内容区域统一样式 */
+.chart-section > div,
+.calories-ring-container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 确保图表容器大小一致 */
+.donut-container,
+.recharts-responsive-container {
+  width: 100% !important;
+  height: 300px !important;
+}
+
+.dashboard h2 {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+.calories-ring-container {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  margin: 0 auto;
+}
+
+.calories-ring {
+  transform: rotate(-90deg);
+  overflow: visible;
+}
+
+.ring-background {
+  stroke: #f0f0f0;
+}
+
+.ring-progress {
+  stroke-linecap: round;
+  transition: stroke-dashoffset 850ms ease-in-out, stroke 300ms ease-in-out;
+}
+
+.ring-overflow {
+  stroke-linecap: round;
+  transition: stroke-dashoffset 850ms ease-in-out;
+  animation: appearWithDelay 300ms ease-in-out;
+}
+
+@keyframes appearWithDelay {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.calories-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  width: 100%;
+}
+
+.current-calories {
+  font-size: 2.5rem;
+  font-weight: 600;
+  color: #333;
+  line-height: 1;
+  margin-bottom: 0.2rem;
+}
+
+.goal-calories {
+  font-size: 0.9rem;
+  color: #666;
+  opacity: 0.8;
+}
+
+.chart-section {
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 2px 2px 5px rgba(50, 133, 87, 0.1);
+  text-align: center;
+}
+
+/* 环形图容器 */
+.donut-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.donut-wrapper {
+  position: relative;
+  width: 300px;
+  height: 300px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* 环形图扇区 */
+.donut-segment {
+  outline: none !important;
+  cursor: pointer;
+  transition: transform 300ms ease-in-out !important;
+}
+
+/* 确保扇区的变换原点正确 */
+.recharts-pie-sector {
+  transform-origin: center center;
+  transition: all 300ms ease-in-out;
+}
+
+/* 环形图中心内容 */
+.donut-center-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  animation: fadeInUp 300ms ease forwards;
+}
+
+/* 环形图中心内容文字样式 */
+.donut-center-content .meal-name,
+.donut-center-content .unit,
+.donut-center-content .percentage {
+  color: #333;
+}
+
+.donut-center-content .value {
+  transition: color 300ms ease-in-out;
+}
+
+.donut-center-content .percentage {
+  display: flex;
+  align-items: baseline;
+  gap: 1px;
+}
+
+/* 中心内容的动画 */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translate(-50%, calc(-50% + 15px));
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+}
+
+/* 中心内容的样式 */
+.meal-name {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.calorie-divider {
+  width: 30px;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.3);
+  margin: 4px 0;
+}
+
+.calorie-value {
+  display: flex;
+  align-items: baseline;
+  gap: 2px;
+  margin-top: 4px;
+}
+
+.calorie-value .value {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.calorie-value .unit {
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+.percentage {
+  font-size: 0.9rem;
+  opacity: 0.8;
+  margin-top: 4px;
+}
+
+/* 折线图样式 */
+.recharts-cartesian-axis-tick {
+  font-size: 0.8rem;
+}
+
+.recharts-tooltip-wrapper {
+  font-size: 0.9rem;
+}

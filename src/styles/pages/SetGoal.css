@@ -1,0 +1,84 @@
+/* SetGoal 页面样式 */
+.set-goal-container {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    width: 100vw;
+    height: 100vh;
+    padding-left: calc(7vw + 5%);
+    overflow: hidden;
+    position: relative;
+  }
+  
+  .set-goal-box {
+    width: 400px;
+    padding: 30px;
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(50, 133, 87, 0.1);
+    text-align: center;
+  }
+  
+  h1 {
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
+  
+  .goal-options {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin: 20px 0;
+  }
+  
+  .goal-btn {
+    width: 100%;
+    padding: 12px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 10px;
+    color: white;
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out;
+  }
+  
+  .goal-btn:hover {
+    transform: scale(1.05);
+  }
+  
+  .selected {
+    border: 2px solid #333;
+  }
+  
+  .next-btn {
+    width: 100%;
+    padding: 12px;
+    font-size: 1.2rem;
+    font-weight: normal;
+    border-radius: 10px;
+    cursor: pointer;
+    background-color: #32794F;
+    color: white;
+    transition: background 0.3s ease-in-out;
+    border: none;
+  }
+  
+  .next-btn:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+  }
+  
+  .set-goal-container::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: -20%;
+    width: 70vw;
+    height: 100vh;
+    background-image: url("/images/pic2.png");
+    background-size: auto 120vh;
+    background-position: left center;
+    background-repeat: no-repeat;
+    z-index: -1;
+  }
+  

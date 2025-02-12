@@ -1,0 +1,64 @@
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 5%;
+  background-color: #BEEBC2;
+  z-index: 10;
+  position: relative;
+}
+
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: normal;
+  font-family: 'Sigmar One', cursive;
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out;
+}
+
+.logo:hover {
+  transform: scale(1.05);
+}
+
+.navbar .nav-links {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+/* 🌟 统一按钮样式 */
+.navbar .nav-links button {
+  width: 120px;
+  text-align: center;
+  font-size: 1rem;
+  font-weight: normal;
+  padding: 10px 24px;
+  border-radius: 10px;
+  border: none;
+  box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+
+/* 🎨 登录按钮 */
+.navbar .nav-links .login-btn {
+  background-color: transparent;
+  color: black;
+}
+
+.navbar .nav-links .login-btn:hover {
+  background-color: #b3ddb7;
+}
+
+/* 🎨 注册按钮 */
+.navbar .nav-links .signup-btn {
+  background-color: #BEEBC2;
+  color: black;
+}
+
+.navbar .nav-links .signup-btn:hover {
+  background-color: #b3ddb7;
+}
+
+

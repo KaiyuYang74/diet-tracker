@@ -1,0 +1,61 @@
+/* 🌍 全局基础样式 */
+@import url('https://fonts.googleapis.com/css2?family=Sigmar+One&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap');
+
+
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Open Sans', sans-serif;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    width: 100vw;
+    height: 100vh;
+    overflow-x: hidden;
+  }
+  
+
+/* 🌟 页面布局 */
+.layout-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.content {
+  flex-grow: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+/* 🌟 统一按钮样式 */
+/* button {
+    cursor: pointer;
+    border: none;
+    font-size: 1rem;
+    padding: 12px 24px;
+    background-color: #90ee90;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: 0.3s ease-in-out;
+  }
+  
+  button:hover {
+    background-color: #76c76b;
+  }
+  
+
+img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+  } */
