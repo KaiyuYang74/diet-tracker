@@ -1,0 +1,156 @@
+.goals-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  width: 90%;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.goals-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(350px, 1fr));
+  gap: 20px;
+  justify-content: center;
+  width: 100%;
+  max-width: 1100px;
+  margin-bottom: 40px;
+}
+
+/* .section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.section-header h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #333;
+} */
+
+.goals-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+@media (max-width: 800px) {
+  .goals-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.goal-card {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 2px 2px 5px rgba(50, 133, 87, 0.1);
+  height: fit-content;
+  width: 100%;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.card-header h3 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.edit-btn {
+  color: #32794F;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.9rem;
+  padding: 6px 12px;
+  border-radius: 6px;
+  transition: background-color 0.3s ease;
+}
+
+.edit-btn:hover {
+  background-color: rgba(50, 121, 79, 0.1);
+}
+
+.guide-link {
+  color: #32794F;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.9rem;
+  padding: 8px 16px;
+  border-radius: 6px;
+  transition: background-color 0.3s ease;
+}
+
+.guide-link:hover {
+  background-color: rgba(50, 121, 79, 0.1);
+}
+
+/* 营养网格 */
+.nutrition-grid,
+.meals-grid,
+.nutrients-grid,
+.vitamins-grid,
+.exercise-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.nutrition-item,
+.meal-item,
+.nutrient-item,
+.vitamin-item,
+.exercise-item {
+  padding: 16px;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+.nutrition-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.meal-item,
+.nutrient-item,
+.vitamin-item,
+.exercise-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.percentage {
+  color: #666;
+  font-size: 0.9rem;
+  text-align: right;
+}
+
+.lock-icon {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.nutrients-grid {
+  margin-bottom: 20px;
+}

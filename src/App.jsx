@@ -5,6 +5,9 @@ import Register from "./pages/Register";
 import SetGoal from "./pages/SetGoal";
 import FillDetails from "./pages/FillDetails";
 import Home from "./pages/Home";
+import Goals from "./pages/Goals";
+import Diet from "./pages/Diet";
+import Exercise from "./pages/Exercise";
 
 function App() {
   return (
@@ -16,6 +19,9 @@ function App() {
         <Route path="/set-goal" element={<SetGoal />} />
         <Route path="/fill-details" element={<FillDetails />} />
         <Route path="/home" element={<Home />} />
+        <Route path="/goals" element={<Goals />} />
+        <Route path="/diet" element={<Diet />} />
+        <Route path="/exercise" element={<Exercise />} />
       </Routes>
     </Router>
   );

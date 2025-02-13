@@ -1,0 +1,285 @@
+.diet-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  width: 90%;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.diet-content {
+  width: 100%;
+}
+
+/* 日期导航 */
+.date-navigation {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  background: white;
+  padding: 12px;
+  border-radius: 10px;
+  box-shadow: 2px 2px 5px rgba(50, 133, 87, 0.1);
+}
+
+.current-date {
+  flex: 1;
+  text-align: center;
+  font-size: 1.2rem;
+  font-weight: 500;
+}
+
+.nav-btn,
+.calendar-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 6px;
+  transition: background-color 0.3s ease;
+}
+
+.nav-btn:hover,
+.calendar-btn:hover {
+  background-color: rgba(50, 121, 79, 0.1);
+}
+
+/* 主网格布局 */
+.diet-grid {
+  display: grid;
+  grid-template-columns: 1fr 350px;
+  gap: 20px;
+}
+
+@media (max-width: 1000px) {
+  .diet-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* 餐食部分 */
+.meals-section {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.meal-card {
+  background: white;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 2px 2px 5px rgba(50, 133, 87, 0.1);
+}
+
+.meal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.meal-header h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.meal-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.add-food-btn,
+.quick-tools-btn {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+}
+
+.add-food-btn {
+  background-color: #32794F;
+  color: white;
+}
+
+.add-food-btn:hover {
+  background-color: #2b6945;
+}
+
+.quick-tools-btn {
+  background-color: #f0f0f0;
+  color: #666;
+}
+
+.quick-tools-btn:hover {
+  background-color: #e0e0e0;
+}
+
+.empty-meal {
+  text-align: center;
+  padding: 20px;
+  color: #666;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+/* 营养总计 */
+.nutrition-totals {
+  background: white;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 2px 2px 5px rgba(50, 133, 87, 0.1);
+}
+
+.totals-row {
+  display: flex;
+  padding: 12px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.totals-row:last-child {
+  border-bottom: none;
+}
+
+.total-label {
+  width: 90px;
+  font-weight: 500;
+  text-align: left;
+  padding-left: 12px;
+}
+
+.total-values {
+  flex: 1;
+  display: flex;
+  justify-content: flex-start;
+  gap: 40px;
+}
+
+.total-values span {
+  width: 60px;
+  text-align: right;
+}
+
+.remaining {
+  color: #32794F;
+  font-weight: 500;
+}
+
+/* 完成按钮 */
+.complete-btn {
+  width: 100%;
+  padding: 12px;
+  background-color: #32794F;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+}
+
+.complete-btn:hover {
+  background-color: #2b6945;
+}
+
+/* 饮水部分 */
+.water-card {
+  background: white;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 2px 2px 5px rgba(50, 133, 87, 0.1);
+}
+
+.water-card h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.water-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.water-amount {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 8px;
+}
+
+.amount {
+  font-size: 2rem;
+  font-weight: 600;
+  color: #32794F;
+}
+
+.unit {
+  font-size: 1rem;
+  color: #666;
+}
+
+.water-visual {
+  text-align: center;
+  font-size: 3rem;
+  margin: 16px 0;
+}
+
+.quick-add h4 {
+  margin-bottom: 8px;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.quick-buttons {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.quick-buttons button {
+  padding: 8px;
+  border: 1px solid #32794F;
+  border-radius: 6px;
+  background: none;
+  color: #32794F;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.quick-buttons button:hover {
+  background-color: #32794F;
+  color: white;
+}
+
+.custom-add {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.custom-add input {
+  flex: 1;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.add-btn {
+  padding: 8px 16px;
+  background-color: #32794F;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.add-btn:hover {
+  background-color: #2b6945;
+}
