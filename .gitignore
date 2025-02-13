@@ -16,12 +16,19 @@ pnpm-lock.yaml
 # Build output
 dist/
 dist-ssr/
+build/
+
+# Public files that shouldn't be committed
+*.pem
+*.crt
+*.key
 
 # Environment variables
 .env
 .env.local
 .env.development
 .env.production
+.env.test
 
 # Editor directories and files
 .vscode/
@@ -39,3 +46,33 @@ Thumbs.db  # Windows 生成的缩略图缓存文件
 
 # Miscellaneous
 *.local
+
+# React / Next.js specific files
+.next/
+out/
+.cache/
+coverage/
+public/*.cache
+public/*.map
+public/static/
+storybook-static/
+
+# Jest / Testing related files
+coverage/
+*.snap
+
+# TypeScript related files
+*.tsbuildinfo
+
+# Lint / Formatting related files
+.eslintcache
+.stylelintcache
+
+# MacOS specific files
+*.DS_Store
+
+# Dependency security audit
+.npm/
+.pnp/
+.pnp.js
+.pnpm-debug.log
