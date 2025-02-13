@@ -116,6 +116,14 @@ function Home() {
                 <div className="goal-calories">of {goalCalories} kcal</div>
               </div>
             </div>
+            {/* 在 calories-ring-container 后添加 */}
+            <div className="calories-formula">
+              Remains = Target
+              <span className="operation">-</span>
+              Foods
+              <span className="operation">+</span>
+              Sports
+            </div>
           </div>
 
           {/* 饼状图 */}
