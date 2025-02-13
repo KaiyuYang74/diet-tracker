@@ -54,13 +54,22 @@ const sampleWeight = [
 ];
 
 function Home() {
-  const [caloriesToday, setCaloriesToday] = useState(1700);
   const goalCalories = 2000;
+  const foodCalories = 1700;
+  const exerciseCalories = 0;
+  const [caloriesToday, setCaloriesToday] = useState(foodCalories);
   const [selected, setSelected] = useState(null);
   const [hoveredIndex, setHoveredIndex] = useState(null);
 
   // 计算总卡路里
   const totalCalories = sampleCalories.reduce((sum, item) => sum + item.value, 0);
+
+  const getWeightDomain = () => {
+    const minWeight = Math.min(...sampleWeight.map(d => d.weight));
+    const maxWeight = Math.max(...sampleWeight.map(d => d.weight));
+    const padding = (maxWeight - minWeight) * 0.1;
+    return [minWeight - padding, maxWeight + padding];
+  };
 
   return (
     <BaseLayout>
@@ -69,6 +78,14 @@ function Home() {
           {/* Dashboard */}
           <div className="dashboard">
             <h2>Today's Calories</h2>
+            {/* 在 calories-ring-container 后添加 */}
+            <div className="calories-formula">
+              Remains = Target
+              <span className="operation">-</span>
+              Foods
+              <span className="operation">+</span>
+              Sports
+            </div>
             <div className="calories-ring-container">
               <svg className="calories-ring" viewBox="0 0 200 200">
                 {/* 背景圆环 */}
@@ -116,14 +133,22 @@ function Home() {
                 <div className="goal-calories">of {goalCalories} kcal</div>
               </div>
             </div>
-            {/* 在 calories-ring-container 后添加 */}
-            <div className="calories-formula">
-              Remains = Target
-              <span className="operation">-</span>
-              Foods
-              <span className="operation">+</span>
-              Sports
+
+            <div className="calories-indicators">
+              <div className="indicator">
+                <span className="indicator-label">Base Target</span>
+                <span className="indicator-value">{goalCalories}</span>
+              </div>
+              <div className="indicator">
+                <span className="indicator-label">Food</span>
+                <span className="indicator-value">{foodCalories}</span>
+              </div>
+              <div className="indicator">
+                <span className="indicator-label">Exercise</span>
+                <span className="indicator-value">{exerciseCalories}</span>
+              </div>
             </div>
+            
           </div>
 
           {/* 饼状图 */}
@@ -235,7 +260,7 @@ function Home() {
               <LineChart data={sampleWeight}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="date" />
-                <YAxis />
+                <YAxis domain={getWeightDomain()} />
                 <Tooltip />
                 <Line type="monotone" dataKey="weight" stroke="#FF8042" />
               </LineChart>
