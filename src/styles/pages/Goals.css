@@ -1,156 +1,252 @@
-.goals-container {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 20px;
-  width: 90%;
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 20px;
+/* 卡片特定样式 */
+.nutrition-card,
+.meal-card,
+.nutrients-card,
+.exercise-card {
+  position: relative;
+  overflow: hidden;
 }
 
-.goals-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(350px, 1fr));
-  gap: 20px;
-  justify-content: center;
-  width: 100%;
-  max-width: 1100px;
-  margin-bottom: 40px;
-}
-
-/* .section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.section-header h2 {
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: #333;
-} */
-
-.goals-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
-  max-width: 1100px;
-  margin: 0 auto;
-}
-
-@media (max-width: 800px) {
-  .goals-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-.goal-card {
-  background-color: #fff;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 2px 2px 5px rgba(50, 133, 87, 0.1);
-  height: fit-content;
-  width: 100%;
-}
-
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.card-header h3 {
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: #333;
-}
-
-.edit-btn {
-  color: #32794F;
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 0.9rem;
-  padding: 6px 12px;
-  border-radius: 6px;
-  transition: background-color 0.3s ease;
-}
-
-.edit-btn:hover {
-  background-color: rgba(50, 121, 79, 0.1);
-}
-
-.guide-link {
-  color: #32794F;
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 0.9rem;
-  padding: 8px 16px;
-  border-radius: 6px;
-  transition: background-color 0.3s ease;
-}
-
-.guide-link:hover {
-  background-color: rgba(50, 121, 79, 0.1);
-}
-
-/* 营养网格 */
-.nutrition-grid,
-.meals-grid,
-.nutrients-grid,
-.vitamins-grid,
-.exercise-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.nutrition-item,
-.meal-item,
-.nutrient-item,
-.vitamin-item,
-.exercise-item {
-  padding: 16px;
-  background: #f8f9fa;
-  border-radius: 8px;
-}
-
+/* 营养项目样式 */
 .nutrition-item {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+  padding: var(--space-4);
+  background: var(--neutral-50);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-3);
 }
 
-.meal-item,
-.nutrient-item,
-.vitamin-item,
-.exercise-item {
+.nutrition-item.highlight {
+  background: #BEEBC2;
+  padding: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
+.highlight .item-header {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-1);
+}
+
+.highlight .item-header span:first-child {
+  font-size: 1.2rem;
+  color: var(--neutral-800);
+  line-height: 1.2;
+}
+
+.highlight .item-header span:last-child {
+  font-size: 1.8rem;
+  color: var(--neutral-900);
+  font-weight: 600;
+  line-height: 1.2;
 }
 
 .item-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: var(--space-2);
 }
 
-.percentage {
-  color: #666;
+/* 进度条样式 */
+.progress-bar {
+  position: relative;
+  height: 8px;
+  background: var(--neutral-200);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-top: var(--space-2);
+}
+
+.progress-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  background: var(--primary);
+  border-radius: 4px;
+  transition: width var(--transition-base);
+}
+
+.progress-text {
+  position: absolute;
+  right: 0;
+  top: -18px;
+  font-size: 0.8rem;
+  color: var(--neutral-600);
+}
+
+/* 餐次项目样式 */
+.meal-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-3) var(--space-4);
+  background: var(--neutral-50);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-3);
+}
+
+.meal-info {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  align-items: center;
+}
+
+.meal-name {
+  font-weight: 500;
+  color: var(--neutral-900);
+}
+
+.meal-details {
+  display: flex;
+  gap: var(--space-3);
+  color: var(--neutral-600);
+}
+
+.meal-percentage {
+  color: var(--primary);
+}
+
+/* 微量营养素样式 */
+.nutrient-item,
+.vitamin-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-3) var(--space-4);
+  background: var(--neutral-50);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-2);
+}
+
+.nutrient-name,
+.vitamin-name {
+  color: var(--neutral-700);
+}
+
+.nutrient-value,
+.vitamin-value {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--primary);
+  font-weight: 500;
+}
+
+/* 运动目标样式 */
+.exercise-grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.exercise-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-3) var(--space-4);
+  background: var(--neutral-50);
+  border-radius: var(--radius-md);
+}
+
+.exercise-item > span:first-child {
+  color: var(--neutral-700);
+}
+
+.exercise-item > span:last-child {
+  font-weight: 500;
+  color: var(--primary);
+}
+
+/* 状态样式 */
+.status.enabled {
+  background: var(--primary-light);
+  color: var(--primary);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-sm);
   font-size: 0.9rem;
+}
+
+/* 编辑按钮样式 */
+.btn-icon {
+  color: var(--primary);
+  gap: var(--space-2);
+}
+
+.btn-icon.active {
+  background-color: var(--primary-light);
+}
+
+/* 编辑面板样式 */
+.editor-panel {
+  background: var(--white);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  margin: var(--space-4) 0;
+  border: 1px solid var(--neutral-200);
+}
+
+.editor-panel h4 {
+  color: var(--neutral-700);
+  margin-bottom: var(--space-4);
+  font-size: 1rem;
+}
+
+.editor-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
+/* 百分比输入组件样式 */
+.percentage-input {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.input-label {
+  font-size: 0.9rem;
+  color: var(--neutral-600);
+}
+
+.input-group {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-group input {
+  width: 100%;
+  padding: var(--space-2) var(--space-3);
+  padding-right: 25px;
+  border: 1px solid var(--neutral-300);
+  border-radius: var(--radius-sm);
+  font-size: 0.95rem;
+}
+
+.input-group input:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+.input-suffix {
+  position: absolute;
+  right: var(--space-3);
+  color: var(--neutral-600);
+  font-size: 0.9rem;
+}
+
+.total-percentage {
   text-align: right;
-}
-
-.lock-icon {
-  color: #666;
   font-size: 0.9rem;
+  color: var(--neutral-600);
 }
 
-.nutrients-grid {
-  margin-bottom: 20px;
+.warning {
+  color: #ff4d4f;
+  margin-left: var(--space-2);
 }

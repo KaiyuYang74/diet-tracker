@@ -1,11 +1,13 @@
 import { useState } from "react";
+import { ChevronLeft, ChevronRight, Calendar, Edit2 } from 'lucide-react';
 import BaseLayout from "../layouts/BaseLayout";
+import "../styles/theme.css";
 import "../styles/pages/Exercise.css";
+
 
 function Exercise() {
   const [currentDate, setCurrentDate] = useState(new Date());
 
-  // 日期导航
   const formatDate = (date) => {
     return date.toLocaleDateString('en-US', {
       year: 'numeric',
@@ -17,81 +19,91 @@ function Exercise() {
 
   return (
     <BaseLayout>
-      <div className="exercise-container">
-        <div className="exercise-content">
-          {/* 日期导航 */}
-          <div className="date-navigation">
-            <button className="nav-btn">◀</button>
-            <div className="current-date">{formatDate(currentDate)}</div>
-            <button className="nav-btn">▶</button>
-            <button className="calendar-btn">📅</button>
-          </div>
+      <div className="page-container">
+        {/* 日期导航 */}
+        <div className="date-nav">
+          <button className="btn-icon">
+            <ChevronLeft size={20} />
+          </button>
+          <div className="current-date">{formatDate(currentDate)}</div>
+          <button className="btn-icon">
+            <ChevronRight size={20} />
+          </button>
+          <button className="btn-icon">
+            <Calendar size={20} />
+          </button>
+        </div>
 
-          {/* 心肺运动区域 */}
-          <div className="exercise-section cardio">
-            <div className="section-header">
-              <h2>Cardio Exercise</h2>
-              <div className="header-columns">
-                <div className="column">Minutes</div>
-                <div className="column">Calories Burned</div>
-              </div>
+        <div className="grid-layout">
+          {/* 心肺运动卡片 */}
+          <div className="card">
+            <div className="card-header">
+              <h3>Cardio Exercise</h3>
+              <button className="btn-icon">
+                <Edit2 size={18} />
+                <span>Add Exercise</span>
+              </button>
             </div>
             
-            <div className="section-actions">
-              <button className="add-exercise-btn">Add Exercise</button>
-              <button className="quick-tools-btn">Quick Tools</button>
+            <div className="data-row">
+              <span className="data-label">Daily Total / Goal</span>
+              <div className="data-value">
+                <span>0 / 30 min</span>
+                <span>0 / 300 kcal</span>
+              </div>
             </div>
 
-            <div className="totals-rows">
-              <div className="total-row">
-                <div className="row-label">Daily Total / Goal</div>
-                <div className="row-values">
-                  <span>0 / 0</span>
-                  <span>0 / 0</span>
-                </div>
-              </div>
-              <div className="total-row">
-                <div className="row-label">Weekly Total / Goal</div>
-                <div className="row-values">
-                  <span>0 / 0</span>
-                  <span>0 / 0</span>
-                </div>
+            <div className="data-row">
+              <span className="data-label">Weekly Total / Goal</span>
+              <div className="data-value">
+                <span>0 / 150 min</span>
+                <span>0 / 1500 kcal</span>
               </div>
             </div>
           </div>
 
-          {/* 肌力训练区域 */}
-          <div className="exercise-section strength">
-            <div className="section-header">
-              <h2>Strength Training</h2>
-              <div className="header-columns">
-                <div className="column">Sets</div>
-                <div className="column">Reps/Set</div>
-                <div className="column">Weight/Set</div>
-              </div>
+          {/* 力量训练卡片 */}
+          <div className="card">
+            <div className="card-header">
+              <h3>Strength Training</h3>
+              <button className="btn-icon">
+                <Edit2 size={18} />
+                <span>Add Exercise</span>
+              </button>
             </div>
             
-            <div className="section-actions">
-              <button className="add-exercise-btn">Add Exercise</button>
-              <button className="quick-tools-btn">Quick Tools</button>
+            <div className="data-row">
+              <span className="data-label">Weekly Goal</span>
+              <span className="data-value">3 sessions</span>
+            </div>
+
+            <div className="exercise-log empty">
+              <p>No strength training logged today</p>
+              <button className="btn-primary">Add Workout</button>
             </div>
           </div>
 
-          {/* 运动记录区域 */}
-          <div className="exercise-section notes">
-            <div className="notes-header">
-              <h2>Exercise Notes</h2>
-              <button className="edit-btn">Edit</button>
+          {/* 运动记录卡片 */}
+          <div className="card">
+            <div className="card-header">
+              <h3>Exercise Notes</h3>
+              <button className="btn-icon">
+                <Edit2 size={18} />
+                <span>Edit</span>
+              </button>
             </div>
             <textarea 
-              className="notes-input" 
+              className="form-input"
               placeholder="Record your exercise notes here..."
+              rows={4}
             />
           </div>
-
-          {/* 完成按钮 */}
-          <button className="complete-btn">Complete This Entry</button>
         </div>
+
+        {/* 完成按钮 */}
+        <button className="btn btn-primary complete-btn">
+          Complete This Entry
+        </button>
       </div>
     </BaseLayout>
   );

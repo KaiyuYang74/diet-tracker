@@ -8,6 +8,8 @@ import Home from "./pages/Home";
 import Goals from "./pages/Goals";
 import Diet from "./pages/Diet";
 import Exercise from "./pages/Exercise";
+import Profile from "./pages/Profile";
+import Settings from "./pages/Settings";
 
 function App() {
   return (
@@ -22,6 +24,8 @@ function App() {
         <Route path="/goals" element={<Goals />} />
         <Route path="/diet" element={<Diet />} />
         <Route path="/exercise" element={<Exercise />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/settings" element={<Settings />} />
       </Routes>
     </Router>
   );
