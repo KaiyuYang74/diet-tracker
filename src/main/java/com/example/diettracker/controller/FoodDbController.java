@@ -1,4 +1,4 @@
-package com.ece651.diettracker.controller;
+package com.example.diettracker.controller;
 
 import java.util.List;
 
@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ece651.diettracker.model.Food;
-import com.ece651.diettracker.repository.FoodRepository;
+import com.example.diettracker.model.Food;
+import com.example.diettracker.repository.FoodRepository;
 
 @RestController
 //给该控制器内的所有接口统一加上前缀。这里把前缀设为 /api/food。

@@ -1,13 +1,13 @@
-package com.ece651.diettracker.controller;
+package com.example.diettracker.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import com.ece651.diettracker.model.Food;
-import com.ece651.diettracker.repository.FoodRepository;
-import com.ece651.diettracker.service.FoodService;
+import com.example.diettracker.model.Food;
+import com.example.diettracker.repository.FoodRepository;
+import com.example.diettracker.service.FoodService;
 
 import java.util.Optional;
 

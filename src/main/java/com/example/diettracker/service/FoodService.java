@@ -1,10 +1,10 @@
-package com.ece651.diettracker.service;
+package com.example.diettracker.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.ece651.diettracker.model.Food;
-import com.ece651.diettracker.repository.FoodRepository;
+import com.example.diettracker.model.Food;
+import com.example.diettracker.repository.FoodRepository;
 
 import java.util.List;
 import java.util.Optional;

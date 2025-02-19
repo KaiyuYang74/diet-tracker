@@ -1,4 +1,4 @@
-package com.ece651.diettracker.model;
+package com.example.diettracker.model;
 
 import jakarta.persistence.*;
 

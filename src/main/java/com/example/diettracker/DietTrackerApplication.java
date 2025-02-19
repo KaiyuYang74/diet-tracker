@@ -1,4 +1,4 @@
-package com.ece651.diettracker;
+package com.example.diettracker;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
