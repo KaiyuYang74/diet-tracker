@@ -1,0 +1,35 @@
+---
+description: 
+globs: *.java
+---
+
+# Your rule content
+
+- 本项目是个java spring boot 网页应用 追踪用户diet并给出智能饮食diet推荐 mysql数据库里存有各种的热量及营养学信息 该应用能根据 用户的要求智能生成diet 用户可以输入饮食目标,比如热量,用户还能记录实际的每天diet 应用还能智能给出修正建议
+- 目录结构:diet-tracker
+├── pom.xml
+├── src
+│   ├── main
+│   │   ├── java
+│   │   │   └── com
+│   │   │       └── example
+│   │   │           └── diettracker
+│   │   │               ├── DietTrackerApplication.java
+│   │   │               ├── controller
+│   │   │               │   └── FoodController.java
+│   │   │               ├── model
+│   │   │               │   └── Food.java
+│   │   │               ├── repository
+│   │   │               │   └── FoodRepository.java
+│   │   │               └── service
+│   │   │                   └── FoodService.java
+│   │   └── resources
+│   │       ├── application.properties
+│   │       └── static  (可放静态资源，如JS/CSS/图片等)
+│   │       └── templates (可放前端模板，如Thymeleaf等)
+│   └── test
+│       └── java
+│           └── com
+│               └── example
+│                   └── diettracker
+│                       └── DietTrackerApplicationTests.java

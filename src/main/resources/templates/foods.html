@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8" />
+        <title>食品列表</title>
+    </head>
+    <body>
+        <h1>食品列表</h1>
+        <a href="/foods/new">新增食品</a>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>名称</th>
+                    <th>热量</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="food : ${foods}">
+                    <td th:text="${food.id}"></td>
+                    <td th:text="${food.name}"></td>
+                    <td th:text="${food.caloricValue}"></td>
+                    <td>
+                        <a th:href="@{'/foods/edit/' + ${food.id}}">编辑</a> |
+                        <a
+                            th:href="@{'/foods/delete/' + ${food.id}}"
+                            onclick="return confirm('确定删除吗?');"
+                            >删除</a
+                        >
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </body>
+</html>

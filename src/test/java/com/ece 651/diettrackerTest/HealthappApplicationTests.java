@@ -1,4 +1,4 @@
-package com.example.healthapp;
+package com.example.diettrackerTest;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
