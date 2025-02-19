@@ -1,33 +1,78 @@
-HELP.md
-target/
-!.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
 
-### STS ###
-.apt_generated
-.classpath
-.factorypath
-.project
-.settings
-.springBeans
-.sts4-cache
+# Node modules & dependencies
+node_modules/
+package-lock.json  # 可选，根据团队需求决定是否提交
+yarn.lock
+pnpm-lock.yaml
 
-### IntelliJ IDEA ###
-.idea
-*.iws
-*.iml
-*.ipr
-
-### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
+# Build output
+dist/
+dist-ssr/
 build/
-!**/src/main/**/build/
-!**/src/test/**/build/
 
-### VS Code ###
+# Public files that shouldn't be committed
+*.pem
+*.crt
+*.key
+
+# Environment variables
+.env
+.env.local
+.env.development
+.env.production
+.env.test
+
+# Editor directories and files
 .vscode/
+!.vscode/extensions.json  # 允许共享 VS Code 扩展推荐
+.idea/
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# OS-specific files
+Thumbs.db  # Windows 生成的缩略图缓存文件
+
+# Miscellaneous
+*.local
+
+# React / Next.js specific files
+.next/
+out/
+.cache/
+coverage/
+public/*.cache
+public/*.map
+public/static/
+storybook-static/
+
+# Jest / Testing related files
+coverage/
+*.snap
+
+# TypeScript related files
+*.tsbuildinfo
+
+# Lint / Formatting related files
+.eslintcache
+.stylelintcache
+
+# MacOS specific files
+*.DS_Store
+
+# Dependency security audit
+.npm/
+.pnp/
+.pnp.js
+.pnpm-debug.log

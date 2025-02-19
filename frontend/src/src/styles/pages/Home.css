@@ -1,0 +1,196 @@
+/* 卡路里环形图样式 */
+.calories-ring-container {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  margin: 0 auto;
+}
+
+.calories-ring {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.ring-background {
+  stroke: var(--neutral-100);
+}
+
+.ring-progress, .ring-overflow {
+  stroke-linecap: round;
+  transition: stroke-dashoffset 850ms ease-in-out;
+}
+
+.calories-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.current-calories {
+  font-size: 2.5rem;
+  font-weight: 600;
+  color: var(--neutral-900);
+  line-height: 1;
+  margin-bottom: 0.2rem;
+}
+
+.goal-calories {
+  font-size: 0.9rem;
+  color: var(--neutral-600);
+}
+
+/* 卡路里公式显示 */
+.calories-formula {
+  color: var(--neutral-600);
+  font-size: 0.9rem;
+  text-align: center;
+  margin-bottom: var(--space-3);
+}
+
+.calories-formula .operation {
+  margin: 0 var(--space-1);
+  color: var(--neutral-500);
+}
+
+/* 卡路里指标 */
+.calories-indicators {
+  display: flex;
+  justify-content: space-around;
+  margin-top: var(--space-5);
+  padding: 0 var(--space-3);
+}
+
+.indicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 80px;
+}
+
+.indicator-label {
+  font-size: 0.9rem;
+  color: var(--neutral-600);
+  margin-bottom: var(--space-1);
+}
+
+.indicator-value {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--neutral-900);
+}
+
+/* 环形图样式 */
+.donut-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.donut-wrapper {
+  position: relative;
+  width: 300px;
+  height: 300px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.donut-segment {
+  outline: none;
+  cursor: pointer;
+  transition: transform 300ms ease-in-out;
+}
+
+.donut-center-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--white);
+  box-shadow: var(--shadow-sm);
+  animation: fadeInUp 300ms ease forwards;
+}
+
+.meal-name {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: var(--space-1);
+}
+
+.calorie-divider {
+  width: 30px;
+  height: 2px;
+  background: var(--neutral-200);
+  margin: var(--space-1) 0;
+}
+
+.calorie-value {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-1);
+  margin-top: var(--space-1);
+}
+
+.calorie-value .value {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.calorie-value .unit {
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+.percentage {
+  font-size: 0.9rem;
+  opacity: 0.8;
+  margin-top: var(--space-1);
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translate(-50%, calc(-50% + 15px));
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+}
+
+/* 图表通用样式 */
+.chart-section {
+  min-height: 350px;
+  display: flex;
+  flex-direction: column;
+}
+
+.chart-section h3 {
+  margin-bottom: var(--space-4);
+  text-align: center;
+}
+
+/* 响应式图表 */
+.recharts-responsive-container {
+  flex: 1;
+}
+
+.recharts-tooltip-wrapper {
+  background: var(--white);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-sm);
+  padding: var(--space-2);
+  font-size: 0.9rem;
+}

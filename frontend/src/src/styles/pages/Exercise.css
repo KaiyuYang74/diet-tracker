@@ -1,0 +1,31 @@
+/* 运动记录为空时的样式 */
+.exercise-log.empty {
+  text-align: center;
+  padding: var(--space-6);
+  background: var(--neutral-50);
+  border-radius: var(--radius-md);
+  margin-top: var(--space-4);
+}
+
+.exercise-log.empty p {
+  color: var(--neutral-600);
+  margin-bottom: var(--space-4);
+}
+
+/* 数据值的特殊布局 */
+.data-value {
+  display: flex;
+  gap: var(--space-4);
+}
+
+/* 文本区域的特殊样式 */
+textarea.form-input {
+  resize: vertical;
+  min-height: 100px;
+}
+
+/* 完成按钮样式 */
+.complete-btn {
+  width: 100%;
+  margin-top: var(--space-4);
+}

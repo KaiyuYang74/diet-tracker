@@ -1,17 +1,8 @@
-## DietTracker
+# React + Vite
 
-A full-stack application that tracks users’ diets and provides intelligent recommendations based on personal health goals. Built with Java Spring Boot (Maven) in the backend and a modern JavaScript framework (e.g., React or Vue) in the frontend.
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-### Requirements
+Currently, two official plugins are available:
 
-- Java 17 or higher
-- Maven 3.5.0 or higher
-
-### Installation
-
-1. Clone the repository
-   git clone https://github.com/KaiyuYang74/diet-tracker
-2. Run `mvn clean install` to build the project
-
-
-
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh

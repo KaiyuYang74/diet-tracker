@@ -1,0 +1,44 @@
+/* index.css - 只保留首页特有的样式 */
+.left-section {
+  flex: 1;
+  padding-left: calc(7vw + 5%);
+  text-align: left;
+}
+
+.left-section h1 {
+  font-size: 6rem;
+  font-weight: bold;
+}
+
+.highlight {
+  color: red;
+  font-size: 5rem;
+}
+
+.subtext {
+  font-size: 2.5rem;
+  font-weight: normal;
+}
+
+.subtitle {
+  font-size: 0.9rem;
+  color: gray;
+  margin-top: 5px;
+}
+
+.start-btn {
+  padding: 12px 48px;
+  font-size: 1.2rem;
+  font-weight: normal;
+  border-radius: 10px;
+  cursor: pointer;
+  background-color: #BEEBC2;
+  color: black;
+  box-shadow: 2px 2px 4px rgba(50, 133, 87, 0.1);
+  transition: background 0.3s ease-in-out;
+  border: none;
+}
+
+.start-btn:hover {
+  background-color: #b3ddb7;
+}

@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8" />
+        <title>食品表单</title>
+    </head>
+    <body>
+        <h1 th:text="${food.id} == null ? '新增食品' : '编辑食品'"></h1>
+        <form
+            th:action="@{${food.id} == null ? '/foods' : '/foods/update'}"
+            method="post"
+            th:object="${food}"
+        >
+            <input type="hidden" th:field="*{id}" />
+            <div>
+                <label>名称:</label>
+                <input type="text" th:field="*{name}" />
+            </div>
+            <div>
+                <label>热量:</label>
+                <input type="number" th:field="*{caloricValue}" />
+            </div>
+            <div>
+                <label>脂肪:</label>
+                <input type="number" step="0.01" th:field="*{fat}" />
+            </div>
+            <div>
+                <label>饱和脂肪:</label>
+                <input type="number" step="0.01" th:field="*{saturatedFats}" />
+            </div>
+            <div>
+                <label>单不饱和脂肪:</label>
+                <input
+                    type="number"
+                    step="0.01"
+                    th:field="*{monounsaturatedFats}"
+                />
+            </div>
+            <div>
+                <label>多不饱和脂肪:</label>
+                <input
+                    type="number"
+                    step="0.01"
+                    th:field="*{polyunsaturatedFats}"
+                />
+            </div>
+            <div>
+                <label>碳水化合物:</label>
+                <input type="number" step="0.01" th:field="*{carbohydrates}" />
+            </div>
+            <div>
+                <label>糖:</label>
+                <input type="number" step="0.01" th:field="*{sugars}" />
+            </div>
+            <div>
+                <label>蛋白质:</label>
+                <input type="number" step="0.01" th:field="*{protein}" />
+            </div>
+            <div>
+                <label>膳食纤维:</label>
+                <input type="number" step="0.01" th:field="*{dietaryFiber}" />
+            </div>
+            <div>
+                <label>胆固醇:</label>
+                <input type="number" step="0.01" th:field="*{cholesterol}" />
+            </div>
+            <div>
+                <label>钠:</label>
+                <input type="number" step="0.01" th:field="*{sodium}" />
+            </div>
+            <div>
+                <label>水:</label>
+                <input type="number" step="0.01" th:field="*{water}" />
+            </div>
+            <div>
+                <label>维生素A:</label>
+                <input type="number" step="0.01" th:field="*{vitaminA}" />
+            </div>
+            <div>
+                <label>维生素B1:</label>
+                <input type="number" step="0.01" th:field="*{vitaminB1}" />
+            </div>
+            <div>
+                <label>维生素B11:</label>
+                <input type="number" step="0.01" th:field="*{vitaminB11}" />
+            </div>
+            <div>
+                <label>维生素B12:</label>
+                <input type="number" step="0.01" th:field="*{vitaminB12}" />
+            </div>
+            <div>
+                <label>维生素B2:</label>
+                <input type="number" step="0.01" th:field="*{vitaminB2}" />
+            </div>
+            <div>
+                <label>维生素B3:</label>
+                <input type="number" step="0.01" th:field="*{vitaminB3}" />
+            </div>
+            <div>
+                <label>维生素B5:</label>
+                <input type="number" step="0.01" th:field="*{vitaminB5}" />
+            </div>
+            <div>
+                <label>维生素B6:</label>
+                <input type="number" step="0.01" th:field="*{vitaminB6}" />
+            </div>
+            <div>
+                <label>维生素C:</label>
+                <input type="number" step="0.01" th:field="*{vitaminC}" />
+            </div>
+            <div>
+                <label>维生素D:</label>
+                <input type="number" step="0.01" th:field="*{vitaminD}" />
+            </div>
+            <div>
+                <label>维生素E:</label>
+                <input type="number" step="0.01" th:field="*{vitaminE}" />
+            </div>
+            <div>
+                <label>维生素K:</label>
+                <input type="number" step="0.01" th:field="*{vitaminK}" />
+            </div>
+            <div>
+                <label>钙:</label>
+                <input type="number" step="0.01" th:field="*{calcium}" />
+            </div>
+            <div>
+                <label>铜:</label>
+                <input type="number" step="0.01" th:field="*{copper}" />
+            </div>
+            <div>
+                <label>铁:</label>
+                <input type="number" step="0.01" th:field="*{iron}" />
+            </div>
+            <div>
+                <label>镁:</label>
+                <input type="number" step="0.01" th:field="*{magnesium}" />
+            </div>
+            <div>
+                <label>锰:</label>
+                <input type="number" step="0.01" th:field="*{manganese}" />
+            </div>
+            <div>
+                <label>磷:</label>
+                <input type="number" step="0.01" th:field="*{phosphorus}" />
+            </div>
+            <div>
+                <label>钾:</label>
+                <input type="number" step="0.01" th:field="*{potassium}" />
+            </div>
+            <div>
+                <label>硒:</label>
+                <input type="number" step="0.01" th:field="*{selenium}" />
+            </div>
+            <div>
+                <label>锌:</label>
+                <input type="number" step="0.01" th:field="*{zinc}" />
+            </div>
+            <div>
+                <button type="submit">提交</button>
+            </div>
+        </form>
+        <a href="/foods">返回列表</a>
+    </body>
+</html>

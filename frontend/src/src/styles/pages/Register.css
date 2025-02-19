@@ -1,0 +1,36 @@
+/* Register.css - 只保留注册页面特有的样式 */
+
+/* 隐私政策 */
+.privacy-policy {
+  font-size: 0.8rem;
+  color: var(--neutral-600);
+  margin-top: var(--space-2);
+}
+
+.privacy-policy a {
+  color: var(--primary);
+  text-decoration: none;
+  transition: color var(--transition-base);
+}
+
+.privacy-policy a:hover {
+  text-decoration: underline;
+}
+
+/* 登录链接 */
+.login-link {
+  margin-top: var(--space-4);
+  font-size: 0.9rem;
+}
+
+.login-link span {
+  color: var(--primary);
+  cursor: pointer;
+  font-weight: 500;
+  transition: color var(--transition-base);
+}
+
+.login-link span:hover {
+  color: var(--primary-dark);
+  text-decoration: underline;
+}
