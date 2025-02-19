@@ -8,7 +8,7 @@
 		<version>3.5.0-SNAPSHOT</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.ece651</groupId>
+	<groupId>com.example</groupId>
 	<artifactId>diettracker</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
