@@ -1,0 +1,109 @@
+/* 通用容器布局 */
+.auth-container {
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    position: relative;
+}
+
+/* 首页特殊布局 */
+.auth-container.bg-index {
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* 其他认证页面布局 */
+.auth-container:not(.bg-index) {
+    justify-content: flex-start;
+    align-items: center;
+    padding-left: calc(7vw + 5%);
+}
+
+/* 通用背景图片样式 */
+.auth-container::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: -20%;
+    width: 70vw;
+    height: 100vh;
+    background-size: auto 120vh;
+    background-position: left center;
+    background-repeat: no-repeat;
+    z-index: -1;
+}
+
+/* 不同页面的背景图片 */
+.auth-container.bg-index::before,
+.auth-container.bg-login::before,
+.auth-container.bg-register::before {
+    background-image: url("/images/pic1.png");
+}
+
+.auth-container.bg-set-goal::before,
+.auth-container.bg-fill-details::before {
+    background-image: url("/images/pic2.png");
+}
+
+/* 通用认证框样式（登录、注册、设置目标、填写详情） */
+.auth-box {
+    width: 400px;
+    padding: 30px;
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(50, 133, 87, 0.1);
+    text-align: center;
+}
+
+.auth-box h1 {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+/* 通用表单样式 */
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+/* 通用输入框样式 */
+.auth-input {
+    width: 100%;
+    padding: 12px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+}
+
+/* 通用按钮样式 */
+.auth-btn {
+    width: 100%;
+    padding: 12px;
+    font-size: 1.2rem;
+    font-weight: normal;
+    border-radius: 10px;
+    cursor: pointer;
+    background-color: #32794F;
+    color: white;
+    transition: background 0.3s ease-in-out;
+    border: none;
+}
+
+.auth-btn:hover {
+    background-color: #2b6945;
+}
+
+/* 通用链接文本样式 */
+.auth-link {
+    margin-top: 10px;
+    font-size: 0.9rem;
+}
+
+.auth-link span {
+    color: #32794F;
+    cursor: pointer;
+}

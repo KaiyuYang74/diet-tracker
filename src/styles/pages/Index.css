@@ -1,15 +1,4 @@
-/* ✅ 整个页面填满屏幕 */
-.index-container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100vw;
-  height: 100vh;
-  overflow: hidden;
-  position: relative;
-}
-
-/* 左侧内容 */
+/* index.css - 只保留首页特有的样式 */
 .left-section {
   flex: 1;
   padding-left: calc(7vw + 5%);
@@ -52,19 +41,4 @@
 
 .start-btn:hover {
   background-color: #b3ddb7;
-}
-
-/* 右侧图片背景 */
-.index-container::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  right: -20%;
-  width: 70vw;
-  height: 100vh;
-  background-image: url("/images/pic1.png");
-  background-size: auto 120vh;
-  background-position: left center;
-  background-repeat: no-repeat;
-  z-index: -1; 
 }

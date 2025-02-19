@@ -1,5 +1,7 @@
+// Login.jsx
 import { useNavigate } from "react-router-dom";
 import BaseLayout from "../layouts/BaseLayout";
+import "../styles/auth.css";
 import "../styles/pages/Login.css";
 
 function Login() {
@@ -7,23 +9,22 @@ function Login() {
 
   return (
     <BaseLayout>
-      <div className="login-container">
-        {/* 左侧登录框 */}
-        <div className="login-box">
+      <div className="auth-container bg-login">
+        <div className="auth-box">
           <h1>Login</h1>
-          <form className="login-form">
-            <input type="text" placeholder="Username or Email" className="input-field" />
-            <input type="password" placeholder="Password" className="input-field" />
+          <form className="auth-form">
+            <input type="text" placeholder="Username or Email" className="auth-input" />
+            <input type="password" placeholder="Password" className="auth-input" />
             <div className="form-options">
               <label>
                 <input type="checkbox" /> Remember me
               </label>
               <a href="#" className="forgot-password">Forgot password?</a>
             </div>
-            <button className="login-btn">Login</button>
+            <button className="auth-btn">Login</button>
           </form>
-          <p className="register-link">
-            Don’t have an account? <span onClick={() => navigate("/register")}>Sign up</span>
+          <p className="auth-link">
+            Don't have an account? <span onClick={() => navigate("/register")}>Sign up</span>
           </p>
         </div>
       </div>

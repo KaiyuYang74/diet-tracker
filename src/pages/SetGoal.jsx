@@ -1,6 +1,8 @@
+// SetGoal.jsx
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import BaseLayout from "../layouts/BaseLayout";
+import "../styles/auth.css";
 import "../styles/pages/SetGoal.css";
 
 function SetGoal() {
@@ -16,8 +18,8 @@ function SetGoal() {
 
   return (
     <BaseLayout>
-      <div className="set-goal-container">
-        <div className="set-goal-box">
+      <div className="auth-container bg-set-goal">
+        <div className="auth-box">
           <h1>Set Your Goal</h1>
           <p>Select your fitness goal to continue</p>
           <div className="goal-options">
