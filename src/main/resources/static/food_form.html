@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>添加食品</title>
+    </head>
+    <body>
+        <h1>添加食品</h1>
+        <form action="/saveFood" method="post">
+            <label for="foodName">食品名称：</label>
+            <input type="text" id="foodName" name="foodName" required />
+            <br />
+            <label for="calories">卡路里：</label>
+            <input type="number" id="calories" name="calories" required />
+            <br />
+            <input type="submit" value="提交" />
+        </form>
+        <br />
+        <a href="/foods.html">查看全部食品</a>
+    </body>
+</html>

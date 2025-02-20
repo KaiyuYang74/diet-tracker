@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="UTF-8" />
+        <title>数据库食品与营养信息</title>
+    </head>
+    <body>
+        <h1>数据库中全部食品和对应的营养信息</h1>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>食品名称</th>
+                    <th>卡路里</th>
+                    <!-- 在此处可以添加更多营养信息的列，例如膳食纤维、脂肪等 -->
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="food : ${foods}">
+                    <td th:text="${food.foodName}">食品名称</td>
+                    <td th:text="${food.calories}">卡路里</td>
+                </tr>
+            </tbody>
+        </table>
+        <br />
+        <a href="/food_form.html">返回添加食品</a>
+    </body>
+</html>
