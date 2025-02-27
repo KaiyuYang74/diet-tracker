@@ -29,7 +29,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     // login service
-    //User can login in by username or email
+    // User can log in by username or email
     public String login(User loginUser) {
         Optional<User> user = userRepository.findByUsername(loginUser.getUsername())
                 .or(() -> userRepository.findByEmail(loginUser.getUsername()));

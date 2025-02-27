@@ -17,10 +17,24 @@ public class User {
     @Column(unique = true, nullable = false)
     private String username;
 
-    @Column(unique = true, nullable = false)
+    @Column(unique = true)
     private String email;
 
     @Column(nullable = false)
     private String password;
+
+    // Information need to be updated
+    @Column
+    private int age;
+    @Column
+    private String gender;
+    @Column
+    private double height;
+    @Column
+    private double weight;
+    @Column
+    private String goal;
+    @Column
+    private String preferences;
 }
 
