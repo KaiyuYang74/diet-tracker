@@ -5,8 +5,11 @@ E:\UW\ECE651\WebProject\diet_tracker\src\main\java\com\example\diettracker\contr
 E:\UW\ECE651\WebProject\diet_tracker\src\main\java\com\example\diettracker\DietTrackerApplication.java
 E:\UW\ECE651\WebProject\diet_tracker\src\main\java\com\example\diettracker\filter\TokenFilter.java
 E:\UW\ECE651\WebProject\diet_tracker\src\main\java\com\example\diettracker\model\Food.java
+E:\UW\ECE651\WebProject\diet_tracker\src\main\java\com\example\diettracker\model\Foods.java
+E:\UW\ECE651\WebProject\diet_tracker\src\main\java\com\example\diettracker\model\FoodsRec.java
 E:\UW\ECE651\WebProject\diet_tracker\src\main\java\com\example\diettracker\model\User.java
 E:\UW\ECE651\WebProject\diet_tracker\src\main\java\com\example\diettracker\repository\FoodRepository.java
+E:\UW\ECE651\WebProject\diet_tracker\src\main\java\com\example\diettracker\repository\FoodsRepository.java
 E:\UW\ECE651\WebProject\diet_tracker\src\main\java\com\example\diettracker\repository\UserRepository.java
 E:\UW\ECE651\WebProject\diet_tracker\src\main\java\com\example\diettracker\security\JwtAuthenticationFilter.java
 E:\UW\ECE651\WebProject\diet_tracker\src\main\java\com\example\diettracker\security\SecurityConfig.java

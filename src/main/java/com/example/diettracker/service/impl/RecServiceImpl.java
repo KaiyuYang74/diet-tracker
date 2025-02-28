@@ -72,13 +72,13 @@ public class RecServiceImpl implements RecService {
         List<Foods> oils = foodsRepository.findByCategory("OIL");
 
         // 基于蛋白质、碳水、脂肪的热量接近目标比例 5:3:2 选择食物
-        List<FoodsRec> selectedMeats = selectOptimalFoods(meats, meatCount, ProteinGrams, "protein");
-        List<FoodsRec> selectedStaples = selectOptimalFoods(staples, stapleCount, CarbGrams, "carb");
-        List<FoodsRec> selectedOils = selectOptimalFoods(oils, oilCount, FatGrams, "fat");
+        List<FoodsRec> selectedMeats = selectOptimalFoods(meats, meatCount, ProteinGrams * 0.8, "protein");
+        List<FoodsRec> selectedStaples = selectOptimalFoods(staples, stapleCount, CarbGrams * 0.8, "carb");
+        List<FoodsRec> selectedOils = selectOptimalFoods(oils, oilCount, FatGrams * 0.8, "fat");
 
         // 选择蔬菜
         Collections.shuffle(vegetables);
-        vegetables.subList(0, vegetableCount);
+        List<Foods> subVeg = vegetables.subList(0, vegetableCount);
         double vegGrams = 0;
         for (FoodsRec food : selectedMeats) {
             vegGrams += food.getGrams();
@@ -86,10 +86,10 @@ public class RecServiceImpl implements RecService {
         for (FoodsRec food : selectedStaples) {
             vegGrams += food.getGrams();
         }
-        vegGrams *= 2;
+//        vegGrams *= 2;
         double recVegGrams = vegGrams / vegetableCount;
         List<FoodsRec> selectedVegetables = new ArrayList<>();
-        for (Foods food : vegetables) {
+        for (Foods food : subVeg) {
             selectedVegetables.add(new FoodsRec(food.getName(), food.getCategory(), recVegGrams));
         }
 
@@ -105,30 +105,17 @@ public class RecServiceImpl implements RecService {
 
     private List<FoodsRec> selectOptimalFoods(List<Foods> foods, int count, double NutrientGrams, String nutrientType) {
         List<FoodsRec> selectedFoods = new ArrayList<>();
-//        double remainingCalories = targetNutrientCalories;
-//
-//        double finalRemainingCalories = remainingCalories;
-//        foods.sort((a, b) -> Double.compare(
-//                Math.abs(getCaloriesFromNutrient(b, nutrientType) - finalRemainingCalories / count),
-//                Math.abs(getCaloriesFromNutrient(a, nutrientType) - finalRemainingCalories / count)
-//        ));
-//
-//        for (Foods food : foods) {
-//            if (selectedFoods.size() < count && remainingCalories > 0) {
-//                selectedFoods.add(food);
-//                remainingCalories -= getCaloriesFromNutrient(food, nutrientType);
-//            }
-//        }
+
         // 随机选择食物
         Collections.shuffle(foods);
-        foods.subList(0, count);
+        List<Foods> subFoods = foods.subList(0, count);
         double unitTotal = 0;
 
-        for (Foods food : foods) {
+        for (Foods food : subFoods) {
             unitTotal += getUnitGramFromNutrient(food, nutrientType);
         }
         double recGrams = NutrientGrams / unitTotal;
-        for (Foods food : foods) {
+        for (Foods food : subFoods) {
             selectedFoods.add(new FoodsRec(food.getName(), food.getCategory(), recGrams));
         }
 

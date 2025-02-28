@@ -14,11 +14,19 @@ public class Foods {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String name;
+
+    @Column(nullable = false)
     private String category; // 肉类, 主食, 蔬菜, 油类等
+
+    @Column(nullable = false)
     private double protein;
+
+    @Column(nullable = false)
     private double carbs;
+
+    @Column(nullable = false)
     private double fat;
-    private double calories; // 每 100g 的热量
 }
 
