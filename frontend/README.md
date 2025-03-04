@@ -14,4 +14,3 @@ A full-stack application that tracks users’ diets and provides intelligent rec
 2. Run `mvn clean install` to build the project
 
 
-
