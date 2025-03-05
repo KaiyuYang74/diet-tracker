@@ -1,12 +1,22 @@
-import { useState } from "react";
-import { ChevronLeft, ChevronRight, Calendar, Edit2 } from 'lucide-react';
+import { useState, useEffect } from "react";
 import BaseLayout from "../layouts/BaseLayout";
+import DateNavigation from "../components/DateNavigation";
+import { Edit2 } from 'lucide-react';
 import "../styles/theme.css";
 import "../styles/pages/Exercise.css";
 
 
 function Exercise() {
   const [currentDate, setCurrentDate] = useState(new Date());
+
+  // 当日期变化时，可以从API获取数据
+  useEffect(() => {
+    // 这里可以添加API调用来获取特定日期的数据
+    console.log("Date changed in Exercise:", currentDate);
+    
+    // 实际应用中，可能需要执行以下操作：
+    // fetchExerciseData(currentDate.toISOString().split('T')[0]);
+  }, [currentDate]);
 
   const formatDate = (date) => {
     return date.toLocaleDateString('en-US', {
@@ -20,19 +30,11 @@ function Exercise() {
   return (
     <BaseLayout>
       <div className="page-container">
-        {/* 日期导航 */}
-        <div className="date-nav">
-          <button className="btn-icon">
-            <ChevronLeft size={20} />
-          </button>
-          <div className="current-date">{formatDate(currentDate)}</div>
-          <button className="btn-icon">
-            <ChevronRight size={20} />
-          </button>
-          <button className="btn-icon">
-            <Calendar size={20} />
-          </button>
-        </div>
+        {/* 使用新的日期导航组件 */}
+        <DateNavigation 
+          currentDate={currentDate}
+          setCurrentDate={setCurrentDate}
+        />
 
         <div className="grid-layout">
           {/* 心肺运动卡片 */}
