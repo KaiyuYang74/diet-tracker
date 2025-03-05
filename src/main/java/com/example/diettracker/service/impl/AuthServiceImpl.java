@@ -23,21 +23,25 @@ public class AuthServiceImpl implements AuthService {
         if (userRepository.findByUsername(user.getUsername()).isPresent()) {
             return "Username already taken!";
         }
+        if (user.getUsername() == null || user.getPassword() == null || user.getUsername().isEmpty() || user.getPassword().isEmpty()) {
+            return "User registration failed!";
+        }
         userRepository.save(user);
         return "New user registered successfully!";
     }
 
     @Override
     // login service
-    //User can login in by username or email
+    // User can login in by username or email
     public String login(User loginUser) {
-        Optional<User> user = userRepository.findByUsername(loginUser.getUsername())
+        Optional<User> user = userRepository.findByUsernameAndPassword(loginUser.getUsername(), loginUser.getPassword())
                 .or(() -> userRepository.findByEmail(loginUser.getUsername()));
 
-        if (user.isEmpty() || !user.get().getPassword().equals(loginUser.getPassword())) {
+        if (user.isEmpty()) {
             return "Invalid credentials!";
         }
 
-        return "login successfully!" + JwtUtil.generateToken(loginUser.getUsername());
+        JwtUtil.generateToken(loginUser.getUsername());
+        return "login successful!";
     }
 }
