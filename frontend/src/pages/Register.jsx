@@ -8,14 +8,14 @@ import "../styles/pages/Register.css";
 function Register() {
     const navigate = useNavigate();
 
-    // 表单状态管理
+
     const [formData, setFormData] = useState({
         username: "",
         email: "",
         password: "",
     });
 
-    // 处理输入变化
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData((prevState) => ({
@@ -42,8 +42,18 @@ function Register() {
                     password: formData.password,
                 }
             );
-            alert(response.data);
-            navigate("/set-goal");
+
+
+            if (response.data === "Email has been taken") {
+                alert("Email has been taken");
+
+            } else if (response.data === "Username already taken!") {
+                alert("Username already taken!");
+
+            } else {
+                alert(response.data);
+                navigate("/set-goal");
+            }
         } catch (error) {
             console.error("Register failed:", error);
             if (error.response) {
