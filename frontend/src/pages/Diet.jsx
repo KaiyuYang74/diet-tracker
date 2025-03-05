@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import BaseLayout from "../layouts/BaseLayout";
 import { ChevronLeft, ChevronRight, Calendar, Edit2, Plus } from 'lucide-react';
+import DateNavigation from "../components/DateNavigation";
 import "../styles/theme.css";
 import "../styles/pages/Diet.css";
 
@@ -18,6 +19,19 @@ function Diet() {
     sodium: 2300,
     sugar: 50
   };
+
+  // 当日期变化时，可以从API获取数据
+  useEffect(() => {
+    // 这里可以添加API调用来获取特定日期的数据
+    console.log("Date changed:", currentDate);
+    
+    // 模拟API调用
+    // 将水摄入量重置为0，模拟获取新日期的数据
+    setWaterIntake(0);
+    
+    // 实际应用中，可能需要执行以下操作：
+    // fetchDietData(currentDate.toISOString().split('T')[0]);
+  }, [currentDate]);
 
   const meals = [
     { id: 'breakfast', name: 'Breakfast', items: [], targetCalories: 600 },
@@ -58,18 +72,10 @@ function Diet() {
     <BaseLayout>
       <div className="page-container">
           {/* 日期导航 */}
-          <div className="date-nav">
-            <button className="btn-icon">
-              <ChevronLeft size={20} />
-            </button>
-            <div className="current-date">{formatDate(currentDate)}</div>
-            <button className="btn-icon">
-              <ChevronRight size={20} />
-            </button>
-            <button className="btn-icon">
-              <Calendar size={20} />
-            </button>
-          </div>
+          <DateNavigation 
+            currentDate={currentDate}
+            setCurrentDate={setCurrentDate}
+          />
 
           <div className="grid-layout">
             {/* 左侧 - 餐食记录 */}
