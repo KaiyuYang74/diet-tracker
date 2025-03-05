@@ -3,7 +3,7 @@ package com.example.diettracker.model;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "`food-data-group1`")
+@Table(name = "food_nutrition") 
 public class Food {
 
     @Id
@@ -12,6 +12,7 @@ public class Food {
     private Long id;
 
     private String food;
+    // @Column(name = "Caloric_Value") add this if the case change gives errors
     private int caloricValue;
     private double fat;
     private double saturatedFats;
@@ -46,6 +47,7 @@ public class Food {
     private double selenium;
     private double zinc;
     private double nutritionDensity;
+    private String category;
 
     public Food() {
     }
@@ -59,7 +61,7 @@ public class Food {
             double calcium,
             double copper, double iron, double magnesium, double manganese, double phosphorus, double potassium,
             double selenium,
-            double zinc, double nutritionDensity) {
+            double zinc, double nutritionDensity, String category) {
         this.food = name;
         this.caloricValue = caloricValue;
         this.fat = fat;
@@ -95,7 +97,11 @@ public class Food {
         this.selenium = selenium;
         this.zinc = zinc;
         this.nutritionDensity = nutritionDensity;
+        this.category = category;
+
     }
+
+    //add more getter and setter if I missed some
 
     public Long getId() {
         return id;
@@ -379,6 +385,14 @@ public class Food {
 
     public void setZinc(double zinc) {
         this.zinc = zinc;
+    }
+
+    public String getCategory(){
+        return category;
+    }
+
+    public void setCategory(String category){
+        this.category = category;
     }
 
 }
