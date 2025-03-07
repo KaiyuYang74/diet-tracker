@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import BaseLayout from "../layouts/BaseLayout";
 import { Edit2, Plus, Trash2 } from 'lucide-react';
 import { useDiet } from "../context/DietContext";
@@ -10,12 +10,32 @@ import "../styles/pages/Diet.css";
 
 function Diet() {
   const navigate = useNavigate();
-  const [currentDate, setCurrentDate] = useState(new Date());
   const [waterIntake, setWaterIntake] = useState(0);
   const [customAmount, setCustomAmount] = useState(''); 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const { meals, setMeals, removeFood, calculateMealTotals, calculateDailyTotals } = useDiet();
+  const location = useLocation();
+  const [currentDate, setCurrentDate] = useState(() => {
+    const dateParam = new URLSearchParams(location.search).get('date');
+    console.log("Date parameter from URL:", dateParam);
+    
+    if (dateParam) {
+      try {
+        // 简单处理YYYY-MM-DD格式的日期字符串
+        // 这样避免了时区问题
+        const [year, month, day] = dateParam.split('-').map(Number);
+        // 注意月份需要减1，因为Date对象中月份是从0开始的
+        const parsedDate = new Date(year, month - 1, day);
+        console.log("Parsed date:", parsedDate);
+        return parsedDate;
+      } catch (error) {
+        console.error("Error parsing date:", error);
+        return new Date();
+      }
+    }
+    return new Date();
+  });
 
   // 营养目标数据
   const nutritionGoals = {
@@ -123,7 +143,8 @@ function Diet() {
   
   // 处理添加食品按钮点击
   const handleAddFoodClick = (mealType) => {
-    navigate(`/food-search?meal=${mealType}`);
+    const formattedDate = currentDate.toISOString().split('T')[0];
+    navigate(`/food-search?meal=${mealType}&date=${formattedDate}`);
   };
 
   // 计算营养总计

@@ -51,6 +51,10 @@ function Register() {
                 alert("Username already taken!");
 
             } else {
+
+                const [message, userId] = response.data.split('|');
+                localStorage.setItem("userId", userId);
+
                 alert(response.data);
                 navigate("/set-goal");
             }

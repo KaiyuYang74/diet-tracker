@@ -24,7 +24,7 @@ public class AuthServiceImpl implements AuthService {
             return "Username already taken!";
         }
         userRepository.save(user);
-        return "New user registered successfully!";
+        return "New user registered successfully!" + "|" + user.getUserID();
     }
 
     @Override

@@ -74,15 +74,19 @@ function FoodSearch() {
     setError(null);
     
     try {
-      const currentDate = new Date();
+      const dietDate = queryParams.get('date');
+      console.log("Original date from URL:", dietDate);
+
+      const formattedDate = dietDate || new Date().toISOString().split('T')[0];
+      console.log("Using formatted date:", formattedDate);
       
       // 创建要保存的对象 - 不包含userId，API会自动使用当前用户的ID
       const dietInput = {
         foodId: selectedFood.id.toString(),
         dietType: mealType,
         calories: Math.round(selectedFood.calories * quantity),
-        date: currentDate.toISOString().split('T')[0],
-        time: currentDate.toTimeString().split(' ')[0],
+        date: formattedDate,
+        time: new Date().toTimeString().split(' ')[0],
         quantity: parseFloat(quantity)
       };
       
@@ -104,7 +108,8 @@ function FoodSearch() {
       addFood(mealType, foodItem);
       
       // 返回到饮食页面
-      navigate("/diet");
+      console.log("Redirecting to:", `/diet?date=${formattedDate}`);
+      navigate(`/diet?date=${formattedDate}`);
     } catch (error) {
       console.error("Failed to add food:", error);
       setError("Failed to save food entry. Please try again.");
