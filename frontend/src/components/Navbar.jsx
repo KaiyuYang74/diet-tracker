@@ -11,7 +11,7 @@ function Navbar() {
   const currentPath = location.pathname.toLowerCase();
 
   // 更新登录状态检查逻辑，包含所有需要登录的路径
-  const loggedInPaths = ['/home', '/goals', '/diet', '/exercise', '/profile', '/settings'];
+  const loggedInPaths = ['/home', '/goals', '/diet', '/exercise', '/profile', '/settings', '/food-search'];
   const isLoggedIn = loggedInPaths.includes(currentPath);
   
   // 检查是否在注册/填写信息流程中
@@ -62,7 +62,7 @@ function Navbar() {
                 <button 
                   className="logout-btn"
                   onClick={() => { 
-                    localStorage.removeItem('authToken');
+                    localStorage.removeItem('Token');
                     navigate('/');
                     setIsDropdownOpen(false);
                   }}

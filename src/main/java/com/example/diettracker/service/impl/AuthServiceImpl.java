@@ -38,6 +38,6 @@ public class AuthServiceImpl implements AuthService {
             return "Invalid credentials!";
         }
 
-        return "login successfully!" + JwtUtil.generateToken(loginUser.getUsername());
+        return "login successfully!" + JwtUtil.generateToken(loginUser.getUsername()) + "|" + user.get().getUserID();
     }
 }

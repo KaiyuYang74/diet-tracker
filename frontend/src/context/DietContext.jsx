@@ -1,11 +1,11 @@
-import { createContext, useState, useContext } from 'react';
+import { createContext, useState, useContext, useEffect } from 'react';
 
-// Create context
+// 创建上下文
 const DietContext = createContext();
 
-// Create provider component
+// 创建提供者组件
 export function DietProvider({ children }) {
-  // Initialize meals state with empty arrays for each meal type
+  // 初始化餐次状态
   const [meals, setMeals] = useState({
     breakfast: [],
     lunch: [],
@@ -13,7 +13,7 @@ export function DietProvider({ children }) {
     snacks: []
   });
 
-  // Add food to a specific meal
+  // 添加食物到指定餐次
   const addFood = (mealType, food) => {
     setMeals(prevMeals => ({
       ...prevMeals,
@@ -21,7 +21,7 @@ export function DietProvider({ children }) {
     }));
   };
 
-  // Remove food from a specific meal
+  // 从指定餐次移除食物
   const removeFood = (mealType, foodId) => {
     setMeals(prevMeals => ({
       ...prevMeals,
@@ -29,7 +29,7 @@ export function DietProvider({ children }) {
     }));
   };
 
-  // Calculate total nutrition values for a meal
+  // 计算餐次的营养总量
   const calculateMealTotals = (mealType) => {
     if (!meals[mealType] || meals[mealType].length === 0) {
       return { calories: 0, protein: 0, fat: 0, carbs: 0 };
@@ -45,7 +45,7 @@ export function DietProvider({ children }) {
     }, { calories: 0, protein: 0, fat: 0, carbs: 0 });
   };
 
-  // Calculate totals for all meals
+  // 计算所有餐次的营养总量
   const calculateDailyTotals = () => {
     const mealTypes = Object.keys(meals);
     return mealTypes.reduce((total, type) => {
@@ -63,6 +63,7 @@ export function DietProvider({ children }) {
     <DietContext.Provider 
       value={{ 
         meals, 
+        setMeals,
         addFood, 
         removeFood, 
         calculateMealTotals,
@@ -74,7 +75,7 @@ export function DietProvider({ children }) {
   );
 }
 
-// Create custom hook for using the context
+// 自定义钩子
 export function useDiet() {
   const context = useContext(DietContext);
   if (!context) {

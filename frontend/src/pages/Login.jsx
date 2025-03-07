@@ -41,8 +41,11 @@ function Login() {
       console.log("Login response data:", data);
 
       if (data.startsWith("login successfully!")) {
-        const token = data.replace("login successfully!", "");
+        // const token = data.replace("login successfully!", "");
+        const [prefix, tokenAndUserId] = data.split("login successfully!");
+        const [token, userId] = tokenAndUserId.split("|");
         localStorage.setItem("token", token);
+        localStorage.setItem("userId", userId); 
 
         navigate("/home");
       } else {

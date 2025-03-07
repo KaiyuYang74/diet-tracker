@@ -3,7 +3,8 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { ChevronLeft, Plus, Info } from 'lucide-react';
 import { useDiet } from "../context/DietContext";
 import BaseLayout from "../layouts/BaseLayout";
-import { foodAPI } from "../api/food"; // 导入API服务
+import { foodAPI } from "../api/food";
+import { dietInputAPI } from "../api/dietInput";
 import "../styles/theme.css";
 import "../styles/pages/FoodSearch.css";
 
@@ -14,7 +15,17 @@ function FoodSearch() {
   const queryParams = new URLSearchParams(location.search);
   const mealType = queryParams.get("meal") || "breakfast";
   
-  // Convert meal type to display format
+  // 状态
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+  const [hasSearched, setHasSearched] = useState(false);
+  const [selectedFood, setSelectedFood] = useState(null);
+  const [quantity, setQuantity] = useState(1);
+  const [unit, setUnit] = useState("serving");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  
+  // 将餐次类型转换为显示格式
   const getMealTypeDisplay = (type) => {
     switch(type) {
       case 'breakfast': return 'Breakfast';
@@ -24,97 +35,100 @@ function FoodSearch() {
       default: return 'Breakfast';
     }
   };
-  
-  // States
-  const [searchTerm, setSearchTerm] = useState("");
-  const [searchResults, setSearchResults] = useState([]);
-  const [selectedFood, setSelectedFood] = useState(null);
-  const [quantity, setQuantity] = useState(1);
-  const [unit, setUnit] = useState("serving");
-  const [loading, setLoading] = useState(false);
-  
 
-  // 修改初始数据加载使用API
-  useEffect(() => {
-    const loadInitialFoods = async () => {
-      setLoading(true);
-      try {
-        const foods = await foodAPI.getAllFoods();
-        setSearchResults(foods);
-      } catch (error) {
-        console.error("Error loading initial foods:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    
-    loadInitialFoods();
-  }, []);
-
-
-  // Handle search
+  // 处理搜索
   const handleSearch = async (e) => {
     e.preventDefault();
     if (!searchTerm.trim()) return;
     
     setLoading(true);
+    setError(null);
+    setHasSearched(true);
+    
     try {
+      console.log(`Searching for: "${searchTerm}"`);
       const results = await foodAPI.searchFoods(searchTerm);
-      setSearchResults(results);
+      console.log("Search results:", results);
+      
+      setSearchResults(results || []);
     } catch (error) {
       console.error("Error searching foods:", error);
-      // 可以添加错误提示UI
+      setError("Failed to search the food database");
+      setSearchResults([]);
     } finally {
       setLoading(false);
     }
   };
 
-
-  // 修改选择食物时通过API获取详情（可选）
-  const handleSelectFood = async (food) => {
-    try {
-      // 如果需要获取更详细的信息，可以通过ID再次获取
-      // const detailedFood = await foodAPI.getFoodById(food.id);
-      // setSelectedFood(detailedFood);
-      
-      // 如果返回的数据已经足够，直接使用
-      setSelectedFood(food);
-    } catch (error) {
-      console.error("Error fetching food details:", error);
-    }
+  // 选择食物
+  const handleSelectFood = (food) => {
+    console.log("Selected food:", food);
+    setSelectedFood(food);
   };
 
-  // Add to food diary
-  const handleAddFood = () => {
+  // 添加到食物日记
+  const handleAddFood = async () => {
     if (!selectedFood) return;
     
-    // Create food item with quantity
-    const foodItem = {
-      ...selectedFood,
-      quantity: parseFloat(quantity),
-      unit: unit,
-      id: `${selectedFood.id}-${Date.now()}` // Create unique ID
-    };
+    setLoading(true);
+    setError(null);
     
-    // Add to diet context
-    addFood(mealType, foodItem);
-    
-    // Return to diet page
-    navigate("/diet");
+    try {
+      const currentDate = new Date();
+      
+      // 创建要保存的对象 - 不包含userId，API会自动使用当前用户的ID
+      const dietInput = {
+        foodId: selectedFood.id.toString(),
+        dietType: mealType,
+        calories: Math.round(selectedFood.calories * quantity),
+        date: currentDate.toISOString().split('T')[0],
+        time: currentDate.toTimeString().split(' ')[0],
+        quantity: parseFloat(quantity)
+      };
+      
+      console.log("Adding food to diary:", dietInput);
+      
+      // 调用API保存到数据库
+      const result = await dietInputAPI.addDietInput(dietInput);
+      console.log("API response:", result);
+      
+      // 添加到本地状态
+      const foodItem = {
+        ...selectedFood,
+        quantity: parseFloat(quantity),
+        unit: unit,
+        id: result.dietID ? result.dietID.toString() : `${selectedFood.id}-${Date.now()}`,
+        dietID: result.dietID
+      };
+      
+      addFood(mealType, foodItem);
+      
+      // 返回到饮食页面
+      navigate("/diet");
+    } catch (error) {
+      console.error("Failed to add food:", error);
+      setError("Failed to save food entry. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <BaseLayout>
       <div className="page-container">
+        {/* 加载和错误状态 */}
+        {loading && <div className="loading-message">Loading...</div>}
+        {error && <div className="error-message">{error}</div>}
+        
         <div className="search-header">
           <button className="btn-icon back-btn" onClick={() => navigate(-1)}>
             <ChevronLeft size={20} />
             <span>Back</span>
           </button>
-          <h1>Add Food to {mealType.charAt(0).toUpperCase() + mealType.slice(1)}</h1>
+          <h1>Add Food to {getMealTypeDisplay(mealType)}</h1>
         </div>
         
-        {/* Search Box */}
+        {/* 搜索框 */}
         <div className="search-box-container">
           <div className="search-description">
             Search our food database by name
@@ -135,15 +149,9 @@ function FoodSearch() {
             </div>
           </form>
         </div>
-
-        {/* 加载状态 */}
-        {loading && (
-          <div className="loading-state">Loading...</div>
-        )}
-
-
-        {/* Search Results */}
-        {searchResults.length > 0 && !selectedFood && (
+        
+        {/* 搜索结果 */}
+        {hasSearched && searchResults.length > 0 && !selectedFood && (
           <div className="search-results">
             <h2>Search Results</h2>
             <div className="results-list">
@@ -164,7 +172,7 @@ function FoodSearch() {
           </div>
         )}
         
-        {/* Selected Food Details */}
+        {/* 选中食物详情 */}
         {selectedFood && (
           <div className="food-detail-card">
             <h2>{selectedFood.name}</h2>
@@ -237,8 +245,8 @@ function FoodSearch() {
           </div>
         )}
         
-        {/* No Results Message */}
-        {searchTerm && searchResults.length === 0 && (
+        {/* 无结果提示 */}
+        {hasSearched && searchTerm && searchResults.length === 0 && !loading && (
           <div className="no-results">
             <p>No foods found. Would you like to add a new food?</p>
             <button className="btn btn-primary">Add Food to Database</button>

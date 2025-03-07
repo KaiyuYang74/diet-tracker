@@ -9,7 +9,7 @@
 
 /* 营养项目样式 */
 .nutrition-item {
-  padding: var(--space-4);
+  padding: var(--space-3) var(--space-4);
   background: var(--neutral-50);
   border-radius: var(--radius-md);
   margin-bottom: var(--space-3);
@@ -44,6 +44,7 @@
 .item-header {
   display: flex;
   justify-content: space-between;
+  width: 100%;
   align-items: center;
   margin-bottom: var(--space-2);
 }
@@ -185,9 +186,9 @@
 }
 
 .nutrient-values {
-  display: flex;
-  gap: var(--space-3);
-  align-items: center;
+  display: grid;
+  grid-template-columns: 50px 50px; /* 固定两列宽度：一列给百分比，一列给克数 */
+  text-align: right;
 }
 
 .nutrient-percentage {
