@@ -61,6 +61,8 @@ public class DietInputService {
     }
 
     public void deleteDietInput(Integer dietId) {
+        System.out.println("Attempting to delete diet input with ID: " + dietId);
         dietInputRepository.deleteById(dietId);
+        System.out.println("Diet input deleted successfully");
     }
 }

@@ -87,6 +87,7 @@ function Diet() {
       if (result[item.dietType.toLowerCase()]) {
         result[item.dietType.toLowerCase()].push({
           id: item.dietID.toString(),
+          dietID: item.dietID,
           name: item.food ? item.food.food : "Unknown food",
           calories: item.calories,
           protein: item.food ? item.food.protein : 0,
@@ -194,11 +195,19 @@ function Diet() {
                             <button 
                               className="btn-icon delete-btn"
                               onClick={() => {
-                                // 如果有后端ID，调用API删除
+                                // 打印要删除的 dietId
+                                console.log("Deleting diet item with ID:", item.dietID);
+                                console.log("Item object:", item)
+
                                 if (item.dietID) {
                                   dietInputAPI.deleteDietInput(item.dietID)
-                                    .then(() => removeFood(mealType.id, item.id))
-                                    .catch(err => console.error("Failed to delete item:", err));
+                                    .then(() => {
+                                      console.log("Successfully deleted diet item");
+                                      removeFood(mealType.id, item.id);
+                                    })
+                                    .catch(err => {
+                                      console.error("Failed to delete item:", err);
+                                    });
                                 } else {
                                   // 仅从前端状态移除
                                   removeFood(mealType.id, item.id);
