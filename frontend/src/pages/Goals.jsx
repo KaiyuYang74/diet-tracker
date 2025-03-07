@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Edit2, Lock } from 'lucide-react';
+import { Edit2, Check, X, RotateCcw } from 'lucide-react';
 import BaseLayout from "../layouts/BaseLayout";
 import "../styles/theme.css";
 import "../styles/pages/Goals.css";
@@ -44,68 +44,17 @@ const PercentageInput = ({ label, value, onChange, disabled = false }) => (
   </div>
 );
 
-// MacronutrientEditor 组件 - 编辑宏量营养素分配
-const MacronutrientEditor = ({ distribution, onUpdate }) => {
-  const { carbs, protein, fat } = distribution.macronutrients;
-  
-  return (
-    <div className="editor-panel">
-      <h4>Macronutrient Distribution</h4>
-      <div className="editor-grid">
-        <PercentageInput
-          label="Carbs"
-          value={carbs}
-          onChange={(value) => onUpdate('macronutrients', 'carbs', value)}
-        />
-        <PercentageInput
-          label="Protein"
-          value={protein}
-          onChange={(value) => onUpdate('macronutrients', 'protein', value)}
-        />
-        <PercentageInput
-          label="Fat"
-          value={fat}
-          onChange={(value) => onUpdate('macronutrients', 'fat', value)}
-        />
-      </div>
-      <div className="total-percentage">
-        Total: {carbs + protein + fat}%
-        {carbs + protein + fat !== 100 && 
-          <span className="warning">Should equal 100%</span>
-        }
-      </div>
-    </div>
-  );
-};
-
-// MealDistributionEditor 组件 - 编辑餐次分配
-const MealDistributionEditor = ({ distribution, onUpdate }) => {
-  return (
-    <div className="editor-panel">
-      <h4>Meal Distribution</h4>
-      <div className="editor-grid">
-        {Object.entries(distribution.meals).map(([meal, percentage]) => (
-          <PercentageInput
-            key={meal}
-            label={meal.charAt(0).toUpperCase() + meal.slice(1)}
-            value={percentage}
-            onChange={(value) => onUpdate('meals', meal, value)}
-          />
-        ))}
-      </div>
-      <div className="total-percentage">
-        Total: {Object.values(distribution.meals).reduce((sum, val) => sum + val, 0)}%
-        {Object.values(distribution.meals).reduce((sum, val) => sum + val, 0) !== 100 && 
-          <span className="warning">Should equal 100%</span>
-        }
-      </div>
-    </div>
-  );
-};
-
 function Goals() {
   // 编辑状态
-  const [editingCard, setEditingCard] = useState(null);
+  const [editingNutrition, setEditingNutrition] = useState(false);
+  const [editingMeals, setEditingMeals] = useState(false);
+  
+  // 保存原始值用于重置
+  const [originalDistribution, setOriginalDistribution] = useState(initialDistribution);
+
+  // 保存状态前的临时备份
+  const [tempNutritionData, setTempNutritionData] = useState(null);
+  const [tempMealsData, setTempMealsData] = useState(null);
   
   // 营养分配百分比状态
   const [distribution, setDistribution] = useState(initialDistribution);
@@ -154,17 +103,91 @@ function Goals() {
   const nutritionGoals = calculateNutritionGoals();
   const mealDistribution = calculateMealDistribution();
 
-  // 处理编辑按钮点击
-  const handleEdit = (cardName) => {
-    setEditingCard(editingCard === cardName ? null : cardName);
+  // 开始编辑营养目标
+  const handleEditNutrition = () => {
+    if (editingNutrition) {
+      // 取消编辑，恢复到编辑前的状态
+      if (tempNutritionData) {
+        setDistribution(prev => ({
+          ...prev,
+          macronutrients: {...tempNutritionData}
+        }));
+      }
+      setEditingNutrition(false);
+    } else {
+      // 开始编辑，保存当前状态用于取消时恢复
+      setTempNutritionData({...distribution.macronutrients});
+      setEditingNutrition(true);
+    }
+  };
+
+  // 开始编辑餐次分配
+  const handleEditMeals = () => {
+    if (editingMeals) {
+      // 取消编辑，恢复到编辑前的状态
+      if (tempMealsData) {
+        setDistribution(prev => ({
+          ...prev,
+          meals: {...tempMealsData}
+        }));
+      }
+      setEditingMeals(false);
+    } else {
+      // 开始编辑，保存当前状态用于取消时恢复
+      setTempMealsData({...distribution.meals});
+      setEditingMeals(true);
+    }
+  };
+
+  // 保存营养目标编辑
+  const handleSaveNutrition = () => {
+    // 清除临时备份
+    setTempNutritionData(null);
+    setEditingNutrition(false);
+    // 这里可以添加API调用保存数据到后端
+  };
+
+  // 保存餐次分配编辑
+  const handleSaveMeals = () => {
+    // 清除临时备份
+    setTempMealsData(null);
+    setEditingMeals(false);
+    // 这里可以添加API调用保存数据到后端
+  };
+
+  // 重置营养目标编辑
+  const handleResetNutrition = () => {
+    setDistribution(prev => ({
+      ...prev, 
+      macronutrients: {...initialDistribution.macronutrients}
+    }));
+  };
+
+  // 重置餐次分配编辑
+  const handleResetMeals = () => {
+    setDistribution(prev => ({
+      ...prev, 
+      meals: {...initialDistribution.meals}
+    }));
   };
 
   // 更新分配百分比
-  const updateDistribution = (type, key, value) => {
+  const updateMacronutrient = (key, value) => {
     setDistribution(prev => ({
       ...prev,
-      [type]: {
-        ...prev[type],
+      macronutrients: {
+        ...prev.macronutrients,
+        [key]: value
+      }
+    }));
+  };
+
+  // 更新餐次分配
+  const updateMeal = (key, value) => {
+    setDistribution(prev => ({
+      ...prev,
+      meals: {
+        ...prev.meals,
         [key]: value
       }
     }));
@@ -210,11 +233,20 @@ function Goals() {
             <div className="card-header">
               <h3>Daily Nutrition Goals</h3>
               <button 
-                className={`btn-icon ${editingCard === 'nutrition' ? 'active' : ''}`}
-                onClick={() => handleEdit('nutrition')}
+                className={`btn-icon ${editingNutrition ? 'active' : ''}`}
+                onClick={handleEditNutrition}
               >
-                <Edit2 size={18} />
-                <span>Edit</span>
+                {editingNutrition ? (
+                  <>
+                    <X size={18} />
+                    <span>Cancel</span>
+                  </>
+                ) : (
+                  <>
+                    <Edit2 size={18} />
+                    <span>Edit</span>
+                  </>
+                )}
               </button>
             </div>
             <div className="nutrition-grid">
@@ -224,29 +256,72 @@ function Goals() {
                   <span>{BASE_CALORIES} kcal</span>
                 </div>
               </div>
-              {editingCard === 'nutrition' && (
-                <MacronutrientEditor 
-                  distribution={distribution}
-                  onUpdate={updateDistribution}
-                />
-              )}
+              
+
               {Object.entries(nutritionGoals).map(([nutrient, data]) => (
                 nutrient !== 'calories' && (
                   <div key={nutrient} className="nutrition-item">
                     <div className="item-header">
-                      <span>{nutrient.charAt(0).toUpperCase() + nutrient.slice(1)}</span>
-                      <span>{data.amount}g</span>
+                      <span className="nutrient-label">
+                        {nutrient.charAt(0).toUpperCase() + nutrient.slice(1)}
+                      </span>
+                      
+                      {editingNutrition ? (
+                        <div className="edit-input">
+                          <div className="input-group">
+                            <input
+                              type="number"
+                              value={distribution.macronutrients[nutrient]}
+                              onChange={(e) => updateMacronutrient(nutrient, Number(e.target.value))}
+                              min="0"
+                              max="100"
+                              step="1"
+                            />
+                            <span className="input-suffix">%</span>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="nutrient-values">
+                          <span className="nutrient-percentage">{data.percentage}%</span>
+                          <span className="nutrient-amount">{data.amount}g</span>
+                        </div>
+                      )}
                     </div>
                     <div className="progress-bar">
                       <div 
                         className="progress-fill"
                         style={{width: `${data.percentage}%`}}
                       />
-                      <span className="progress-text">{data.percentage}%</span>
                     </div>
                   </div>
                 )
               ))}
+              
+              {editingNutrition && (
+                <div className="action-buttons">
+                  <button 
+                    className="btn btn-secondary" 
+                    onClick={handleResetNutrition}
+                  >
+                    <RotateCcw size={16} />
+                    Reset
+                  </button>
+                  <button 
+                    className="btn btn-primary" 
+                    onClick={handleSaveNutrition}
+                  >
+                    <Check size={16} />
+                    Save
+                  </button>
+                </div>
+              )}
+              
+              <div className="total-percentage">
+                Total: {Object.values(distribution.macronutrients).reduce((sum, val) => sum + val, 0)}%
+                {Object.values(distribution.macronutrients).reduce((sum, val) => sum + val, 0) !== 100 && 
+                  <span className="warning">Should equal 100%</span>
+                }
+              </div>
             </div>
           </div>
 
@@ -255,19 +330,22 @@ function Goals() {
             <div className="card-header">
               <h3>Meal Distribution</h3>
               <button 
-                className={`btn-icon ${editingCard === 'meals' ? 'active' : ''}`}
-                onClick={() => handleEdit('meals')}
+                className={`btn-icon ${editingMeals ? 'active' : ''}`}
+                onClick={handleEditMeals}
               >
-                <Edit2 size={18} />
-                <span>Edit</span>
+                {editingMeals ? (
+                  <>
+                    <X size={18} />
+                    <span>Cancel</span>
+                  </>
+                ) : (
+                  <>
+                    <Edit2 size={18} />
+                    <span>Edit</span>
+                  </>
+                )}
               </button>
             </div>
-            {editingCard === 'meals' && (
-              <MealDistributionEditor 
-                distribution={distribution}
-                onUpdate={updateDistribution}
-              />
-            )}
             <div className="meals-grid">
               {Object.entries(mealDistribution).map(([meal, data]) => (
                 <div key={meal} className="meal-item">
@@ -275,28 +353,63 @@ function Goals() {
                     <span className="meal-name">
                       {meal.charAt(0).toUpperCase() + meal.slice(1)}
                     </span>
-                    <div className="meal-details">
-                      <span className="meal-percentage">{data.percentage}%</span>
-                      <span className="meal-calories">{data.calories} kcal</span>
-                    </div>
+                    
+                    {editingMeals ? (
+                      <div className="edit-input">
+                        <div className="input-group">
+                          <input
+                            type="number"
+                            value={distribution.meals[meal]}
+                            onChange={(e) => updateMeal(meal, Number(e.target.value))}
+                            min="0"
+                            max="100"
+                            step="1"
+                          />
+                          <span className="input-suffix">%</span>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="meal-details">
+                        <span className="meal-percentage">{data.percentage}%</span>
+                        <span className="meal-calories">{data.calories} kcal</span>
+                      </div>
+                    )}
                   </div>
-                  {!data.enabled && <Lock size={16} className="lock-icon" />}
                 </div>
               ))}
+              
+              {editingMeals && (
+                <div className="action-buttons">
+                  <button 
+                    className="btn btn-secondary" 
+                    onClick={handleResetMeals}
+                  >
+                    <RotateCcw size={16} />
+                    Reset
+                  </button>
+                  <button 
+                    className="btn btn-primary" 
+                    onClick={handleSaveMeals}
+                  >
+                    <Check size={16} />
+                    Save
+                  </button>
+                </div>
+              )}
+              
+              <div className="total-percentage">
+                Total: {Object.values(distribution.meals).reduce((sum, val) => sum + val, 0)}%
+                {Object.values(distribution.meals).reduce((sum, val) => sum + val, 0) !== 100 && 
+                  <span className="warning">Should equal 100%</span>
+                }
+              </div>
             </div>
           </div>
 
-          {/* 微量营养素卡片 */}
+          {/* 微量营养素卡片 - 移除了Edit按钮 */}
           <div className="card nutrients-card">
             <div className="card-header">
               <h3>Micronutrients</h3>
-              <button 
-                className={`btn-icon ${editingCard === 'micronutrients' ? 'active' : ''}`}
-                onClick={() => handleEdit('micronutrients')}
-              >
-                <Edit2 size={18} />
-                <span>Edit</span>
-              </button>
             </div>
             <div className="nutrients-grid">
               {Object.entries(micronutrients).map(([nutrient, data]) => (
@@ -306,39 +419,16 @@ function Goals() {
                   </span>
                   <div className="nutrient-value">
                     <span>{data.amount}{data.unit}</span>
-                    {!data.enabled && <Lock size={16} className="lock-icon" />}
-                  </div>
-                </div>
-              ))}
-            </div>
-            <div className="vitamins-grid">
-              {Object.entries(vitamins).map(([vitamin, data]) => (
-                <div key={vitamin} className="vitamin-item">
-                  <span className="vitamin-name">
-                    {vitamin.replace(/([A-Z])/g, ' $1').trim()}
-                  </span>
-                  <div className="vitamin-value">
-                    <span>
-                      {data.amount}{data.unit} ({data.percentage}% DV)
-                    </span>
-                    {!data.enabled && <Lock size={16} className="lock-icon" />}
                   </div>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* 运动目标卡片 */}
+          {/* 运动目标卡片 - 移除了Edit按钮 */}
           <div className="card exercise-card">
             <div className="card-header">
               <h3>Exercise Goals</h3>
-              <button 
-                className={`btn-icon ${editingCard === 'exercise' ? 'active' : ''}`}
-                onClick={() => handleEdit('exercise')}
-              >
-                <Edit2 size={18} />
-                <span>Edit</span>
-              </button>
             </div>
             <div className="exercise-grid">
               <div className="exercise-item">

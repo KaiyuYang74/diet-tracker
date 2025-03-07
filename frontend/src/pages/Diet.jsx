@@ -1,13 +1,18 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import BaseLayout from "../layouts/BaseLayout";
-import { ChevronLeft, ChevronRight, Calendar, Edit2, Plus } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Calendar, Edit2, Plus, Trash2 } from 'lucide-react';
+import { useDiet } from "../context/DietContext";
+import DateNavigation from "../components/DateNavigation";
 import "../styles/theme.css";
 import "../styles/pages/Diet.css";
 
 function Diet() {
+  const navigate = useNavigate();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [waterIntake, setWaterIntake] = useState(0);
   const [customAmount, setCustomAmount] = useState(''); 
+  const { meals, removeFood, calculateMealTotals, calculateDailyTotals } = useDiet();
 
   // 示例数据
   const nutritionGoals = {
@@ -19,11 +24,25 @@ function Diet() {
     sugar: 50
   };
 
-  const meals = [
-    { id: 'breakfast', name: 'Breakfast', items: [], targetCalories: 600 },
-    { id: 'lunch', name: 'Lunch', items: [], targetCalories: 700 },
-    { id: 'dinner', name: 'Dinner', items: [], targetCalories: 500 },
-    { id: 'snacks', name: 'Snacks', items: [], targetCalories: 200 }
+  // 当日期变化时，可以从API获取数据
+  useEffect(() => {
+    // 这里可以添加API调用来获取特定日期的数据
+    console.log("Date changed:", currentDate);
+    
+    // 模拟API调用
+    // 将水摄入量重置为0，模拟获取新日期的数据
+    setWaterIntake(0);
+    
+    // 实际应用中，可能需要执行以下操作：
+    // fetchDietData(currentDate.toISOString().split('T')[0]);
+  }, [currentDate]);
+
+  // Define meal types for UI structure
+  const mealTypes = [
+    { id: 'breakfast', name: 'Breakfast', targetCalories: 600 },
+    { id: 'lunch', name: 'Lunch', targetCalories: 700 },
+    { id: 'dinner', name: 'Dinner', targetCalories: 500 },
+    { id: 'snacks', name: 'Snacks', targetCalories: 200 }
   ];
 
   const formatDate = (date) => {
@@ -53,50 +72,87 @@ function Diet() {
       handleCustomWaterAdd();
     }
   };
+  
+  // 处理添加食品按钮点击
+  const handleAddFoodClick = (mealType) => {
+    navigate(`/food-search?meal=${mealType}`);
+  };
+
+  // Get daily totals
+  const dailyTotals = calculateDailyTotals();
+
+  // Calculate remaining nutrition values
+  const remainingNutrition = {
+    calories: nutritionGoals.calories - dailyTotals.calories,
+    carbs: nutritionGoals.carbs - dailyTotals.carbs,
+    fat: nutritionGoals.fat - dailyTotals.fat,
+    protein: nutritionGoals.protein - dailyTotals.protein
+  };
 
   return (
     <BaseLayout>
       <div className="page-container">
           {/* 日期导航 */}
-          <div className="date-nav">
-            <button className="btn-icon">
-              <ChevronLeft size={20} />
-            </button>
-            <div className="current-date">{formatDate(currentDate)}</div>
-            <button className="btn-icon">
-              <ChevronRight size={20} />
-            </button>
-            <button className="btn-icon">
-              <Calendar size={20} />
-            </button>
-          </div>
+          <DateNavigation 
+            currentDate={currentDate}
+            setCurrentDate={setCurrentDate}
+          />
 
           <div className="grid-layout">
             {/* 左侧 - 餐食记录 */}
             <div className="meals-section">
-              {meals.map(meal => (
-                <div key={meal.id} className="card meal-card">
-                  <div className="card-header">
-                    <h3>{meal.name}</h3>
-                    <div className="header-actions">
-                      <span className="target-calories">{meal.targetCalories} kcal</span>
-                      <button className="btn-icon">
-                        <Plus size={18} />
-                        <span>Add Food</span>
-                      </button>
+              {mealTypes.map(mealType => {
+                // Get meal items from context
+                const mealItems = meals[mealType.id] || [];
+                // Calculate meal nutrition totals
+                const mealTotals = calculateMealTotals(mealType.id);
+                
+                return (
+                  <div key={mealType.id} className="card meal-card">
+                    <div className="card-header">
+                      <h3>{mealType.name}</h3>
+                      <div className="header-actions">
+                        <span className="target-calories">
+                          {mealTotals?.calories > 0 
+                            ? `${Math.round(mealTotals.calories)}/${mealType.targetCalories}`
+                            : `${mealType.targetCalories}`} kcal
+                        </span>
+                        <button 
+                          className="btn-icon"
+                          onClick={() => handleAddFoodClick(mealType.id)}
+                        >
+                          <Plus size={18} />
+                          <span>Add Food</span>
+                        </button>
+                      </div>
                     </div>
+                    {mealItems.length === 0 ? (
+                      <div className="empty-state">
+                        <p>No items added yet</p>
+                      </div>
+                    ) : (
+                      <div className="meal-items">
+                        {mealItems.map(item => (
+                          <div key={item.id} className="food-item">
+                            <div className="food-info">
+                              <div className="food-name">{item.name}</div>
+                              <div className="food-details">
+                                {item.quantity} {item.servingSize}, {Math.round(item.calories * item.quantity)} cal
+                              </div>
+                            </div>
+                            <button 
+                              className="btn-icon delete-btn"
+                              onClick={() => removeFood(mealType.id, item.id)}
+                            >
+                              <Trash2 size={16} />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
-                  {meal.items.length === 0 ? (
-                    <div className="empty-state">
-                      <p>No items added yet</p>
-                    </div>
-                  ) : (
-                    <div className="meal-items">
-                      {/* 这里将来显示食物项目 */}
-                    </div>
-                  )}
-                </div>
-              ))}
+                );
+              })}
 
               {/* 营养总计卡片 */}
               <div className="card nutrition-totals">
@@ -106,10 +162,10 @@ function Diet() {
                 <div className="totals-grid">
                   <div className="total-row">
                     <div className="total-label">Total</div>
-                    <span>0 kcal</span>
-                    <span>0g</span>
-                    <span>0g</span>
-                    <span>0g</span>
+                    <span>{Math.round(dailyTotals.calories)} kcal</span>
+                    <span>{dailyTotals.carbs.toFixed(1)}g</span>
+                    <span>{dailyTotals.fat.toFixed(1)}g</span>
+                    <span>{dailyTotals.protein.toFixed(1)}g</span>
                   </div>
                   <div className="total-row">
                     <div className="total-label">Daily Goal</div>
@@ -120,10 +176,10 @@ function Diet() {
                   </div>
                   <div className="total-row">
                     <div className="total-label">Remaining</div>
-                    <span>{nutritionGoals.calories} kcal</span>
-                    <span>{nutritionGoals.carbs}g</span>
-                    <span>{nutritionGoals.fat}g</span>
-                    <span>{nutritionGoals.protein}g</span>
+                    <span>{Math.round(remainingNutrition.calories)} kcal</span>
+                    <span>{remainingNutrition.carbs.toFixed(1)}g</span>
+                    <span>{remainingNutrition.fat.toFixed(1)}g</span>
+                    <span>{remainingNutrition.protein.toFixed(1)}g</span>
                   </div>
                 </div>
               </div>
