@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import BaseLayout from "../layouts/BaseLayout";
-import { ChevronLeft, ChevronRight, Calendar, Edit2, Plus, Trash2 } from 'lucide-react';
+import { Edit2, Plus, Trash2 } from 'lucide-react';
 import { useDiet } from "../context/DietContext";
 import DateNavigation from "../components/DateNavigation";
 import "../styles/theme.css";

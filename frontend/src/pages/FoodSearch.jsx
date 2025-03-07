@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { ChevronLeft, Plus, Info } from 'lucide-react';
 import { useDiet } from "../context/DietContext";
 import BaseLayout from "../layouts/BaseLayout";
+import { foodAPI } from "../api/food"; // 导入API服务
 import "../styles/theme.css";
 import "../styles/pages/FoodSearch.css";
 
@@ -30,35 +31,57 @@ function FoodSearch() {
   const [selectedFood, setSelectedFood] = useState(null);
   const [quantity, setQuantity] = useState(1);
   const [unit, setUnit] = useState("serving");
+  const [loading, setLoading] = useState(false);
   
-  // Mock API search results
-  const mockSearchAPI = (term) => {
-    // Mock data - should be replaced with actual API call
-    const foods = [
-      { id: 1, name: "Egg Noodles", servingSize: "125 g", calories: 443, protein: 12, fat: 8, carbs: 60 },
-      { id: 2, name: "Egg Roll", servingSize: "1 piece", calories: 80, protein: 6, fat: 5, carbs: 2 },
-      { id: 3, name: "Egg", servingSize: "1 large", calories: 80, protein: 6, fat: 5, carbs: 1 },
-      { id: 4, name: "Egg Pasta", servingSize: "100 g", calories: 370, protein: 10, fat: 3, carbs: 45 },
-      { id: 5, name: "Whole Wheat Bread", servingSize: "1 slice", calories: 80, protein: 4, fat: 1, carbs: 15 },
-      { id: 6, name: "Oatmeal", servingSize: "1 bowl", calories: 150, protein: 5, fat: 3, carbs: 25 },
-      { id: 7, name: "Banana", servingSize: "1 medium", calories: 105, protein: 1.3, fat: 0.4, carbs: 27 },
-      { id: 8, name: "Apple", servingSize: "1 medium", calories: 95, protein: 0.5, fat: 0.3, carbs: 25 }
-    ];
+
+  // 修改初始数据加载使用API
+  useEffect(() => {
+    const loadInitialFoods = async () => {
+      setLoading(true);
+      try {
+        const foods = await foodAPI.getAllFoods();
+        setSearchResults(foods);
+      } catch (error) {
+        console.error("Error loading initial foods:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
     
-    if (!term) return [];
-    return foods.filter(food => food.name.toLowerCase().includes(term.toLowerCase()));
-  };
+    loadInitialFoods();
+  }, []);
+
 
   // Handle search
-  const handleSearch = (e) => {
+  const handleSearch = async (e) => {
     e.preventDefault();
-    const results = mockSearchAPI(searchTerm);
-    setSearchResults(results);
+    if (!searchTerm.trim()) return;
+    
+    setLoading(true);
+    try {
+      const results = await foodAPI.searchFoods(searchTerm);
+      setSearchResults(results);
+    } catch (error) {
+      console.error("Error searching foods:", error);
+      // 可以添加错误提示UI
+    } finally {
+      setLoading(false);
+    }
   };
 
-  // Select food
-  const handleSelectFood = (food) => {
-    setSelectedFood(food);
+
+  // 修改选择食物时通过API获取详情（可选）
+  const handleSelectFood = async (food) => {
+    try {
+      // 如果需要获取更详细的信息，可以通过ID再次获取
+      // const detailedFood = await foodAPI.getFoodById(food.id);
+      // setSelectedFood(detailedFood);
+      
+      // 如果返回的数据已经足够，直接使用
+      setSelectedFood(food);
+    } catch (error) {
+      console.error("Error fetching food details:", error);
+    }
   };
 
   // Add to food diary
@@ -88,7 +111,7 @@ function FoodSearch() {
             <ChevronLeft size={20} />
             <span>Back</span>
           </button>
-          <h1>Add Food to {getMealTypeDisplay(mealType)}</h1>
+          <h1>Add Food to {mealType.charAt(0).toUpperCase() + mealType.slice(1)}</h1>
         </div>
         
         {/* Search Box */}
@@ -112,7 +135,13 @@ function FoodSearch() {
             </div>
           </form>
         </div>
-        
+
+        {/* 加载状态 */}
+        {loading && (
+          <div className="loading-state">Loading...</div>
+        )}
+
+
         {/* Search Results */}
         {searchResults.length > 0 && !selectedFood && (
           <div className="search-results">
