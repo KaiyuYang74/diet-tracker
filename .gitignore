@@ -77,3 +77,4 @@ coverage/
 .pnp.js
 .pnpm-debug.log
 /target
+.DS_Store
