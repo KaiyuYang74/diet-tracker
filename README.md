@@ -21,45 +21,51 @@ The application utilizes a sophisticated two-stage optimization algorithm to rec
 │ Database Read &     │
 │ Food Classification │
 └──────────┬──────────┘
-           ▼
+           │
+           v
 ┌─────────────────────┐     ┌───────────────────────┐
 │  Stage 1: Calorie   │     │ Nutrition Targets:    │
 │  Optimization       │     │ - Protein: 30%        │
 │                     │     │ - Carbs: 20%          │
 │ ┌─────────────────┐ │     │ - Fat: 50%            │
-│ │ Build Simplified │ │     └───────────────────────┘
+│ │ Build Simplified│ │     └───────────────────────┘
 │ │ LP Problem      │ │
 │ └────────┬────────┘ │
-│          ▼          │
+│          │          │
+│          v          │
 │ ┌─────────────────┐ │
 │ │Find 3 Calorie   │ │
-│ │Feasible Solutions│ │
+│ │Feasible Solution│ │
 │ └────────┬────────┘ │
 └──────────┬──────────┘
            │
-           ▼                Fallback Path
+           v                 Fallback Path
 ┌─────────────────────┐     ┌───────────────────────┐
 │ Stage 2: Nutrient   │     │ Fallback Strategy:    │
 │ Optimization        │     │ 1. Hard no-repeat     │
 │                     │     │ 2. Soft repeat penalty│
 │ ┌─────────────────┐ │     │ 3. Allow repeats      │
-│ │ Optimize Nutrient│ │     └──────────┬────────────┘
-│ │ Ratios Based on  │ │                │
-│ │ Baseline Solutions│ │               │
+│ │Optimize Nutrient│ │     └──────────┬────────────┘
+│ │Ratios Based on  │ │                │
+│ │Baseline Solution│ │                │
 │ └────────┬────────┘ │                │
-│          ▼          │                │
+│          │          │                │
+│          v          │                │
 │ ┌─────────────────┐ │                │
 │ │Generate Final   │ │                │
 │ │Candidate Plans  │ │                │
 │ └────────┬────────┘ │                │
 └──────────┬──────────┘                │
-           │◄───────────────────────────
-           ▼
+           │                           │
+           │<───────────────────────────
+           │
+           v
 ┌─────────────────────┐
 │ Randomly Select     │
 │ One Final Plan      │
 └──────────┬──────────┘
-           ▼
+           │
+           v
 ┌─────────────────────┐
 │ Return Three-Meal   │
 │ Recommendation      │
@@ -74,12 +80,12 @@ The application utilizes a sophisticated two-stage optimization algorithm to rec
 └──────────┬──────────┘
            │
            │ implements
-           ▼
+           v
 ┌─────────────────────┐         ┌────────────────┐
 │RecommendServiceImpl │         │  <<Aspect>>    │
-│                     │◄--------│ DietGoalAspect │  <-- Handles nutrition ratios for different diet goals
+│                     │<--------│ DietGoalAspect │  <-- Handles nutrition ratios for different diet goals
 └─────────┬───────────┘         └────────────────┘
-          │                             ▲
+          │                             ^
           │                             │
           │                     ┌────────────────┐
           └---------------------│  <<Aspect>>    │
@@ -88,7 +94,7 @@ The application utilizes a sophisticated two-stage optimization algorithm to rec
 
 ┌─────────────────────┐         ┌────────────────┐
 │    DietGoalType     │         │RecommendRequest│
-│(Weight Loss/Muscle  │◄--------│(Contains goal  │
+│(Weight Loss/Muscle  │<--------│(Contains goal  │
 │ Gain/Weight Gain)   │         │ type)          │
 └─────────────────────┘         └────────────────┘
 ```
@@ -151,7 +157,3 @@ The application utilizes a sophisticated two-stage optimization algorithm to rec
 ## Setup and Installation
 
 [Installation instructions to be added]
-
-## License
-
-[License information to be added]
