@@ -1,0 +1,47 @@
+error id: U5gqnw8Fj5o32Py6JLFTqg==
+### Bloop error:
+
+scala.reflect.internal.MissingRequirementError: object scala in compiler mirror not found.
+	at scala.reflect.internal.MissingRequirementError$.signal(MissingRequirementError.scala:24)
+	at scala.reflect.internal.MissingRequirementError$.notFound(MissingRequirementError.scala:25)
+	at scala.reflect.internal.Mirrors$RootsBase.$anonfun$getModuleOrClass$5(Mirrors.scala:61)
+	at scala.reflect.internal.Mirrors$RootsBase.getPackage(Mirrors.scala:61)
+	at scala.reflect.internal.Definitions$DefinitionsClass.ScalaPackage$lzycompute(Definitions.scala:203)
+	at scala.reflect.internal.Definitions$DefinitionsClass.ScalaPackage(Definitions.scala:203)
+	at scala.reflect.internal.Definitions$DefinitionsClass.ScalaPackageClass$lzycompute(Definitions.scala:204)
+	at scala.reflect.internal.Definitions$DefinitionsClass.ScalaPackageClass(Definitions.scala:204)
+	at scala.reflect.internal.Definitions$DefinitionsClass.AnyClass$lzycompute(Definitions.scala:299)
+	at scala.reflect.internal.Definitions$DefinitionsClass.AnyClass(Definitions.scala:299)
+	at scala.tools.nsc.symtab.classfile.ClassfileParser$ClassTypeCompleter.complete(ClassfileParser.scala:1269)
+	at scala.reflect.internal.Symbols$Symbol.completeInfo(Symbols.scala:1542)
+	at scala.reflect.internal.Symbols$Symbol.info(Symbols.scala:1514)
+	at scala.reflect.internal.Symbols$Symbol.initialize(Symbols.scala:1698)
+	at scala.reflect.internal.Definitions$DefinitionsClass.init(Definitions.scala:1511)
+	at scala.tools.nsc.Global$Run.<init>(Global.scala:1225)
+	at xsbt.ZincCompiler$ZincRun.<init>(CallbackGlobal.scala:91)
+	at xsbt.CachedCompiler0.run(CompilerBridge.scala:175)
+	at xsbt.CachedCompiler0.run(CompilerBridge.scala:146)
+	at xsbt.CompilerBridge.run(CompilerBridge.scala:41)
+	at sbt.internal.inc.AnalyzingCompiler.compile(AnalyzingCompiler.scala:91)
+	at sbt.internal.inc.bloop.internal.BloopHighLevelCompiler.compileSources$1(BloopHighLevelCompiler.scala:148)
+	at sbt.internal.inc.bloop.internal.BloopHighLevelCompiler.$anonfun$compile$9(BloopHighLevelCompiler.scala:181)
+	at scala.runtime.java8.JFunction0$mcV$sp.apply(JFunction0$mcV$sp.java:23)
+	at sbt.internal.inc.bloop.internal.BloopHighLevelCompiler.$anonfun$compile$1(BloopHighLevelCompiler.scala:73)
+	at bloop.tracing.NoopTracer$.trace(BraveTracer.scala:53)
+	at sbt.internal.inc.bloop.internal.BloopHighLevelCompiler.timed$1(BloopHighLevelCompiler.scala:72)
+	at sbt.internal.inc.bloop.internal.BloopHighLevelCompiler.$anonfun$compile$8(BloopHighLevelCompiler.scala:181)
+	at scala.runtime.java8.JFunction0$mcV$sp.apply(JFunction0$mcV$sp.java:23)
+	at monix.eval.internal.TaskRunLoop$.startFull(TaskRunLoop.scala:81)
+	at monix.eval.internal.TaskRestartCallback.syncOnSuccess(TaskRestartCallback.scala:101)
+	at monix.eval.internal.TaskRestartCallback.onSuccess(TaskRestartCallback.scala:74)
+	at monix.eval.internal.TaskExecuteOn$AsyncRegister$$anon$1.run(TaskExecuteOn.scala:71)
+	at java.base/java.util.concurrent.ForkJoinTask$RunnableExecuteAction.exec(ForkJoinTask.java:1423)
+	at java.base/java.util.concurrent.ForkJoinTask.doExec(ForkJoinTask.java:387)
+	at java.base/java.util.concurrent.ForkJoinPool$WorkQueue.topLevelExec(ForkJoinPool.java:1312)
+	at java.base/java.util.concurrent.ForkJoinPool.scan(ForkJoinPool.java:1843)
+	at java.base/java.util.concurrent.ForkJoinPool.runWorker(ForkJoinPool.java:1808)
+	at java.base/java.util.concurrent.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:188)
+#### Short summary: 
+
+scala.reflect.internal.MissingRequirementError: object scala in compiler mirror not found.
+	at scala...
