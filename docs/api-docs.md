@@ -130,6 +130,14 @@ This document provides information about the RESTful API endpoints available in 
 -   **Response**: Food object
 -   **Description**: Retrieves a specific food by its ID.
 
+### Get foods by name
+
+-   **URL**: `/api/foods/name/{name}`
+-   **Method**: `GET`
+-   **URL Parameters**: `name=[String]` - Food name
+-   **Response**: List of Food objects
+-   **Description**: Retrieves all foods matching the specified name.
+
 ### Create food
 
 -   **URL**: `/api/foods`

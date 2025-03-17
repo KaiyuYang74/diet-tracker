@@ -31,6 +31,12 @@ public class FoodController {
                 .orElseThrow(() -> new RuntimeException("Food not found with id " + id));
     }
 
+    // RESTful API 接口 - 根据名称获取食品
+    @GetMapping("/name/{name}")
+    public List<Food> getFoodsByName(@PathVariable String name) {
+        return foodService.getFoodsByName(name);
+    }
+
     // RESTful API 接口 - 创建食品
     @PostMapping
     public Food createFood(@RequestBody Food food) {
