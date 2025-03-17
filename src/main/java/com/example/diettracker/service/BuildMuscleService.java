@@ -30,52 +30,52 @@ import java.util.stream.Collectors;
 @Service
 public class BuildMuscleService {
 
-        @Autowired
-        private FoodRepository foodRepository;
+    @Autowired
+    private FoodRepository foodRepository;
 
-        private static final int[] MEALS = { 0, 1, 2 }; // 三餐编码: 0=早餐,1=午餐,2=晚餐
-        private static final double ALPHA = 0.1; // 重复使用的惩罚系数(示例)
-        private static final double TARGET_PROTEIN_RATIO = 0.4; // 蛋白质占比 40%
-        private static final double TARGET_CARBS_RATIO = 0.4; // 碳水占比 40%
-        private static final double TARGET_FAT_RATIO = 0.2; // 脂肪占比 20%
-        private static final long STAGE2_TIMEOUT_MS = 10000; // 10秒超时
+    private static final int[] MEALS = { 0, 1, 2 }; // 三餐编码: 0=早餐,1=午餐,2=晚餐
+    private static final double ALPHA = 0.1; // 重复使用的惩罚系数(示例)
+    private static final double TARGET_PROTEIN_RATIO = 0.4; // 蛋白质占比 40%
+    private static final double TARGET_CARBS_RATIO = 0.4; // 碳水占比 40%
+    private static final double TARGET_FAT_RATIO = 0.2; // 脂肪占比 20%
+    private static final long STAGE2_TIMEOUT_MS = 10000; // 10秒超时
 
-        /**
+    /**
          * 主入口：根据用户传入的体重、身高和年龄，计算 TDEE (BMR * 1.55)，再减 500 得到 calorieTarget。
          * 然后按照原先两阶段求解逻辑，返回三餐的食物列表 (每餐 [meat, veg, carb])。
-         * 若无解，返回 null。
-         */
-        public List<List<String>> mealPlanRecommendation(double weight, double height, int age) {
-                // 1. 计算 BMR (Mifflin-St Jeor, 男性版本)
-                double bmr = (10 * weight) + (6.25 * height) - (5 * age) + 5;
+     * 若无解，返回 null。
+     */
+    public List<List<String>> mealPlanRecommendation(double weight, double height, int age) {
+        // 1. 计算 BMR (Mifflin-St Jeor, 男性版本)
+        double bmr = (10 * weight) + (6.25 * height) - (5 * age) + 5;
 
-                // 2. 固定活动系数 = 1.55
-                double tdee = bmr * 1.55;
+        // 2. 固定活动系数 = 1.55
+        double tdee = bmr * 1.55;
 
                 // 3. 最终卡路里目标 = TDEE - 500
-                double calorieTarget = tdee;
+        double calorieTarget = tdee;
 
-                System.out.println("Computed BMR=" + bmr + ", TDEE=" + tdee + ", final calorieTarget=" + calorieTarget);
+        System.out.println("Computed BMR=" + bmr + ", TDEE=" + tdee + ", final calorieTarget=" + calorieTarget);
 
-                // =========== 以下为原先逻辑不变 ===========
+        // =========== 以下为原先逻辑不变 ===========
 
-                // 读取全部食物
-                List<Food> allFoods = foodRepository.findAll();
-                System.out.println("Current food database size: " + allFoods.size());
+        // 读取全部食物
+        List<Food> allFoods = foodRepository.findAll();
+        System.out.println("Current food database size: " + allFoods.size());
 
-                // 根据 category 分组
-                List<Food> meats = allFoods.stream()
-                                .filter(f -> "meats".equalsIgnoreCase(f.getCategory()))
-                                .collect(Collectors.toList());
-                List<Food> vegs = allFoods.stream()
-                                .filter(f -> "vegetables".equalsIgnoreCase(f.getCategory()))
-                                .collect(Collectors.toList());
-                List<Food> carbs = allFoods.stream()
-                                .filter(f -> "carbs".equalsIgnoreCase(f.getCategory()))
-                                .collect(Collectors.toList());
-                List<Food> others = allFoods.stream()
+        // 根据 category 分组
+        List<Food> meats = allFoods.stream()
+                .filter(f -> "meats".equalsIgnoreCase(f.getCategory()))
+                .collect(Collectors.toList());
+        List<Food> vegs = allFoods.stream()
+                .filter(f -> "vegetables".equalsIgnoreCase(f.getCategory()))
+                .collect(Collectors.toList());
+        List<Food> carbs = allFoods.stream()
+                .filter(f -> "carbs".equalsIgnoreCase(f.getCategory()))
+                .collect(Collectors.toList());
+        List<Food> others = allFoods.stream()
                                 .filter(f -> "others".equalsIgnoreCase(f.getCategory()))
-                                .collect(Collectors.toList());
+                .collect(Collectors.toList());
 
                 // 第1阶段：只考虑热量约束
                 System.out.println("Stage 1: Simplified optimization");
@@ -179,11 +179,11 @@ public class BuildMuscleService {
                 }
 
                 // (2) 再尝试软约束
-                ModelData modelData2 = buildDailyMealProblem(
-                                meats, vegs, carbs, others,
-                                calorieTarget,
-                                noRepeat(false),
-                                addRepeatPenalty(true),
+            ModelData modelData2 = buildDailyMealProblem(
+                    meats, vegs, carbs, others,
+                    calorieTarget,
+                    noRepeat(false),
+                    addRepeatPenalty(true),
                                 null);
                 List<List<List<String>>> solutions2 = enumerateSolutions(
                                 modelData2,
@@ -775,7 +775,7 @@ public class BuildMuscleService {
                                 if (vv.val == 1) {
                                         cutConstraint.setCoefficient(vv.var, -1.0);
                                         offset += 1.0;
-                                } else {
+            } else {
                                         cutConstraint.setCoefficient(vv.var, 1.0);
                                 }
                         }
@@ -802,8 +802,8 @@ public class BuildMuscleService {
                         List<Food> others) {
 
                 if (solver.objective() == null) {
-                        return null;
-                }
+            return null;
+        }
                 List<List<String>> plan = new ArrayList<>(3);
                 for (int m = 0; m < 3; m++) {
                         List<String> items = new ArrayList<>(3);
