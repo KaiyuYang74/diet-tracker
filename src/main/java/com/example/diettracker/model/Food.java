@@ -3,11 +3,11 @@ package com.example.diettracker.model;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "food_nutrition") 
+@Table(name = "food_nutrition")
 public class Food {
 
     @Id
-    //自动在数据库生成pk
+    // Automatically generate primary key in database
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -101,7 +101,7 @@ public class Food {
 
     }
 
-    //add more getter and setter if I missed some
+    // add more getter and setter if I missed some
 
     public Long getId() {
         return id;
@@ -387,11 +387,11 @@ public class Food {
         this.zinc = zinc;
     }
 
-    public String getCategory(){
+    public String getCategory() {
         return category;
     }
 
-    public void setCategory(String category){
+    public void setCategory(String category) {
         this.category = category;
     }
 

@@ -1,12 +1,12 @@
 package com.example.diettracker.repository;
 
+import com.example.diettracker.model.SetGoal;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.example.diettracker.model.Food;
 import java.util.List;
 
 @Repository
-public interface FoodRepository extends JpaRepository<Food, Long> {
-    List<Food> findByFood(String food);
+public interface SetGoalRepository extends JpaRepository<SetGoal, Integer> {
+    List<SetGoal> findByUser_UserID(Integer userID);
 }

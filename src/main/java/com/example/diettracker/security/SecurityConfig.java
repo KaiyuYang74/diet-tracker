@@ -39,15 +39,23 @@ public class SecurityConfig {
 
                 // 3. 鉴权配置
                 .authorizeHttpRequests(auth -> auth
-                    // 3.1 放行 OPTIONS 预检请求，以便浏览器跨域预检
-                    .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                        // 3.1 放行 OPTIONS 预检请求，以便浏览器跨域预检
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
-                    // 3.2 对注册/登录接口放行
-                    .requestMatchers("/api/auth/register", "/api/auth/login").permitAll()
+                        // 3.2 对注册/登录接口放行
+                        .requestMatchers("/api/auth/register", "/api/auth/login").permitAll()
 
-                    // 3.3 其它接口需要登录访问
-                    .anyRequest().authenticated()
-                )
+                        // 3.3 允许访问静态资源
+                        .requestMatchers("/", "/index.html", "/css/**", "/js/**", "/images/**").permitAll()
+
+                        // 3.4 允许访问meal API
+                        .requestMatchers("/api/meal/**").permitAll()
+
+                        // 3.5 明确允许访问推荐API
+                        .requestMatchers("/api/recommend/**").permitAll()
+
+                        // 3.6 其它接口需要登录访问
+                        .anyRequest().authenticated())
 
                 // 4. 不创建Session (不使用HttpSession存储SecurityContext)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -68,20 +76,28 @@ public class SecurityConfig {
 
         // 允许的来源(你前端的URL)
         configuration.addAllowedOrigin("http://localhost:5173");
+        // 添加允许localhost:1080访问
+        configuration.addAllowedOrigin("http://localhost:1080");
+        // 添加允许localhost:8080访问
+        configuration.addAllowedOrigin("http://localhost:8080");
         // 如果可能有其他端口，也可以加多个
-        // configuration.addAllowedOriginPattern("http://localhost:[*]");
+        configuration.addAllowedOriginPattern("http://localhost:[*]");
 
         // 允许携带cookie
         configuration.setAllowCredentials(true);
 
         // 允许的方法
-        configuration.addAllowedMethod("*");
+        configuration.addAllowedMethod("GET");
+        configuration.addAllowedMethod("POST");
+        configuration.addAllowedMethod("PUT");
+        configuration.addAllowedMethod("DELETE");
+        configuration.addAllowedMethod("OPTIONS");
 
         // 允许的请求头
         configuration.addAllowedHeader("*");
 
-        // 若需要暴露自定义header给前端，可加
-        // configuration.addExposedHeader("Authorization");
+        // 暴露Authorization头给前端
+        configuration.addExposedHeader("Authorization");
 
         // 注册生效
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
