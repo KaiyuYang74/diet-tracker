@@ -11,8 +11,8 @@ import java.util.Optional;
 
 @Service
 public class FoodService {
-//在创建 FoodService 实例时，需要自动查找并注入类型匹配的 Bean。
-//在这里，Spring 将查找一个 FoodRepository 类型的 Bean，并把它注入到 foodRepository 字段中。
+    // 在创建 FoodService 实例时，需要自动查找并注入类型匹配的 Bean。
+    // 在这里，Spring 将查找一个 FoodRepository 类型的 Bean，并把它注入到 foodRepository 字段中。
     @Autowired
     private FoodRepository foodRepository;
 
@@ -35,4 +35,9 @@ public class FoodService {
     public void deleteFood(Long id) {
         foodRepository.deleteById(id);
     }
+
+    public List<Food> getFoodsByName(String name) {
+        return foodRepository.findByFood(name);
+    }
+
 }
