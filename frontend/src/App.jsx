@@ -12,6 +12,7 @@ import Exercise from "./pages/Exercise";
 import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
 import FoodSearch from "./pages/FoodSearch";
+import NotFound from './pages/NotFound';
 
 function App() {
   return (
@@ -30,6 +31,8 @@ function App() {
           <Route path="/profile" element={<Profile />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/food-search" element={<FoodSearch />} />
+
+          <Route path="*" element={<NotFound />} /> {/* 捕获所有未匹配路径 */}
         </Routes>
       </Router>
     </DietProvider>
