@@ -22,13 +22,9 @@ function Diet() {
     
     if (dateParam) {
       try {
-        // 简单处理YYYY-MM-DD格式的日期字符串
-        // 这样避免了时区问题
         const [year, month, day] = dateParam.split('-').map(Number);
-        // 注意月份需要减1，因为Date对象中月份是从0开始的
-        const parsedDate = new Date(year, month - 1, day);
-        console.log("Parsed date:", parsedDate);
-        return parsedDate;
+        // 使用本地时间创建日期
+        return new Date(year, month - 1, day, 0, 0, 0);
       } catch (error) {
         console.error("Error parsing date:", error);
         return new Date();
@@ -50,11 +46,17 @@ function Diet() {
   // 当日期变化时，获取该日期的饮食记录
   useEffect(() => {
     const fetchDietData = async () => {
+      // console.log("Current Date:", currentDate);
+      // console.log("Current Date (toDateString):", currentDate.toDateString());
+      // console.log("Current Date (toISOString):", currentDate.toISOString());
+      // console.log("Formatted Date:", 
+      //   `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}`
+      // );
       setLoading(true);
       setError(null);
       
       try {
-        const formattedDate = currentDate.toISOString().split('T')[0];
+        const formattedDate = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}`;
         
         // 不需要传递用户ID，API会使用当前登录用户的ID
         const dietData = await dietInputAPI.getUserDietByDate(formattedDate);
@@ -143,7 +145,8 @@ function Diet() {
   
   // 处理添加食品按钮点击
   const handleAddFoodClick = (mealType) => {
-    const formattedDate = currentDate.toISOString().split('T')[0];
+    // 使用currentDate作为日期参数
+    const formattedDate = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}`;
     navigate(`/food-search?meal=${mealType}&date=${formattedDate}`);
   };
 

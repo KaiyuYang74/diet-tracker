@@ -77,8 +77,8 @@ function FoodSearch() {
       const dietDate = queryParams.get('date');
       console.log("Original date from URL:", dietDate);
 
-      const formattedDate = dietDate || new Date().toISOString().split('T')[0];
-      console.log("Using formatted date:", formattedDate);
+      const formattedDate = queryParams.get('date') || 
+      `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}-${String(new Date().getDate()).padStart(2, '0')}`;      console.log("Using formatted date:", formattedDate);
       
       // 创建要保存的对象 - 不包含userId，API会自动使用当前用户的ID
       const dietInput = {

@@ -36,7 +36,10 @@ export const dietInputAPI = {
       // 创建一个新对象，确保使用正确的用户ID
       const dataToSend = {
         ...dietInput,
-        userId: userId
+        userId: userId,
+        date: typeof dietInput.date === 'string' 
+          ? dietInput.date 
+          : `${dietInput.date.getFullYear()}-${String(dietInput.date.getMonth() + 1).padStart(2, '0')}-${String(dietInput.date.getDate()).padStart(2, '0')}`
       };
       
       console.log("Sending diet input data:", dataToSend);
@@ -54,6 +57,10 @@ export const dietInputAPI = {
   // 获取用户特定日期的饮食记录
   getUserDietByDate: async (date) => {
     try {
+
+      console.log(`原始传入日期: ${date}`);
+      console.log(`日期类型: ${typeof date}`);
+
       // 确保使用当前登录用户的ID
       const userId = getUserId();
       if (!userId) {
