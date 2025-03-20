@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.sql.Time;
 import java.text.ParseException;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -36,7 +37,11 @@ public class DietInputController {
             Time time = new Time(System.currentTimeMillis()); // 默认当前时间
             
             if (payload.containsKey("date")) {
-                date = new java.text.SimpleDateFormat("yyyy-MM-dd").parse(payload.get("date").toString());
+                String dateStr = payload.get("date").toString();
+                // 直接解析为LocalDate，不涉及时区问题
+                LocalDate localDate = LocalDate.parse(dateStr);
+                // 需要时再转换为java.sql.Date
+                date = java.sql.Date.valueOf(localDate);
             }
             
             if (payload.containsKey("time")) {
