@@ -78,3 +78,7 @@ coverage/
 .pnpm-debug.log
 /target
 .DS_Store
+
+
+# 忽略 application.properties 配置文件
+src/main/resources/application.properties
