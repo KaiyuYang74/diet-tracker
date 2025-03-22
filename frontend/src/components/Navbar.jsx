@@ -13,7 +13,9 @@ function Navbar() {
   const currentPath = location.pathname.toLowerCase();
 
   // 检查是否在注册/填写信息流程中
-  const isOnboardingPage = ['/set-goal', '/fill-details'].includes(currentPath);
+  const UNAUTHENTICATED_PAGES = ['/set-goal', '/fill-details'];
+  const isOnboardingPage = UNAUTHENTICATED_PAGES.includes(currentPath);
+  // const isOnboardingPage = ['/set-goal', '/fill-details'].includes(currentPath);
 
   // 处理 Logo 点击事件
   const handleLogoClick = () => {
