@@ -4,6 +4,7 @@ import MealDistributionChart from './MealDistributionChart';
 import FoodItem from './FoodItem';
 import { recommendationAPI } from '../../api/recommendation';
 import { STORAGE_KEY, processMealData, initialMealData, MEAL_ORDER } from '../constants';
+import '../../styles/components/recommendations/RecommendationsCard.css';
 
 const RecommendationsCard = ({ userId }) => {
   // 状态管理

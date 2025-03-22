@@ -1,8 +1,9 @@
 import React from 'react';
 import CaloriesRing from './CaloriesRing';
 import CalorieIndicator from './CalorieIndicator';
+import '../../styles/components/calories/CaloriesRing.css';
 
-const CaloriesCard = ({ caloriesToday, goalCalories, exerciseCalories }) => {
+const CaloriesCard = ({ caloriesToday, goalCalories, exerciseCalories, remainingCalories }) => {
   return (
     <div className="card">
       <div className="card-header">
@@ -12,9 +13,9 @@ const CaloriesCard = ({ caloriesToday, goalCalories, exerciseCalories }) => {
         Remains = Target - Foods + Sports
       </div>
       
-      {/* 卡路里环形图 */}
+      {/* 卡路里环形图 - 现在使用剩余卡路里 */}
       <CaloriesRing 
-        current={caloriesToday}
+        current={remainingCalories}
         goal={goalCalories}
       />
 
@@ -23,6 +24,7 @@ const CaloriesCard = ({ caloriesToday, goalCalories, exerciseCalories }) => {
         <CalorieIndicator label="Base Target" value={goalCalories} />
         <CalorieIndicator label="Food" value={caloriesToday} />
         <CalorieIndicator label="Exercise" value={exerciseCalories} />
+        <CalorieIndicator label="Remaining" value={remainingCalories} />
       </div>
     </div>
   );

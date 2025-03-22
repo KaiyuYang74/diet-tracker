@@ -1,0 +1,76 @@
+/* 卡路里环形图样式 */
+.calories-ring-container {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    margin: 0 auto;
+  }
+  
+  .calories-ring {
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+  }
+  
+  .ring-background {
+    stroke: var(--neutral-100);
+  }
+  
+  .ring-progress, .ring-overflow {
+    stroke-linecap: round;
+    transition: stroke-dashoffset 850ms ease-in-out;
+  }
+  
+  .calories-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+  }
+  
+  .current-calories {
+    font-size: 2.5rem;
+    font-weight: 600;
+    color: var(--neutral-900);
+    line-height: 1;
+    margin-bottom: 0.2rem;
+  }
+  
+  .goal-calories {
+    font-size: 0.9rem;
+    color: var(--neutral-600);
+  }
+  
+  .calories-formula {
+    color: var(--neutral-600);
+    font-size: 0.9rem;
+    text-align: center;
+    margin-bottom: var(--space-3);
+  }
+  
+  .calories-indicators {
+    display: flex;
+    justify-content: space-around;
+    margin-top: var(--space-5);
+    padding: 0 var(--space-3);
+  }
+  
+  .indicator {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 80px;
+  }
+  
+  .indicator-label {
+    font-size: 0.9rem;
+    color: var(--neutral-600);
+    margin-bottom: var(--space-1);
+  }
+  
+  .indicator-value {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--neutral-900);
+  }
