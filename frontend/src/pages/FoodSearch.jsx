@@ -1,10 +1,11 @@
+// src/pages/FoodSearch.jsx
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { ChevronLeft, Plus, Info } from 'lucide-react';
 import { useDiet } from "../context/DietContext";
 import BaseLayout from "../layouts/BaseLayout";
-import { foodAPI } from "../api/food";
-import { dietInputAPI } from "../api/dietInput";
+import { useFoodAPI } from "../api/food"; // 更新为使用钩子版本
+import { useDietInputAPI } from "../api/dietInput"; // 更新为使用钩子版本
 import "../styles/theme.css";
 import "../styles/pages/FoodSearch.css";
 
@@ -14,6 +15,10 @@ function FoodSearch() {
   const { addFood } = useDiet();
   const queryParams = new URLSearchParams(location.search);
   const mealType = queryParams.get("meal") || "breakfast";
+  
+  // 使用API钩子
+  const foodAPI = useFoodAPI();
+  const dietInputAPI = useDietInputAPI();
   
   // 状态
   const [searchTerm, setSearchTerm] = useState("");
@@ -50,7 +55,14 @@ function FoodSearch() {
       const results = await foodAPI.searchFoods(searchTerm);
       console.log("Search results:", results);
       
-      setSearchResults(results || []);
+      // 确保结果是数组
+      if (Array.isArray(results)) {
+        setSearchResults(results);
+      } else {
+        console.warn("Unexpected search results format:", results);
+        setSearchResults([]);
+        setError("Received invalid data format from server");
+      }
     } catch (error) {
       console.error("Error searching foods:", error);
       setError("Failed to search the food database");
@@ -78,9 +90,10 @@ function FoodSearch() {
       console.log("Original date from URL:", dietDate);
 
       const formattedDate = queryParams.get('date') || 
-      `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}-${String(new Date().getDate()).padStart(2, '0')}`;      console.log("Using formatted date:", formattedDate);
+      `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, '0')}-${String(new Date().getDate()).padStart(2, '0')}`;      
+      console.log("Using formatted date:", formattedDate);
       
-      // 创建要保存的对象 - 不包含userId，API会自动使用当前用户的ID
+      // 创建要保存的对象 - 不需要包含userId，API会自动从认证上下文获取
       const dietInput = {
         foodId: selectedFood.id.toString(),
         dietType: mealType,

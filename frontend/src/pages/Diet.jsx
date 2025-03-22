@@ -1,10 +1,11 @@
+// src/pages/Diet.jsx
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import BaseLayout from "../layouts/BaseLayout";
 import { Edit2, Plus, Trash2 } from 'lucide-react';
 import { useDiet } from "../context/DietContext";
 import DateNavigation from "../components/DateNavigation";
-import { dietInputAPI } from "../api/dietInput";
+import { useDietInputAPI } from "../api/dietInput"; // 更新API导入
 import "../styles/theme.css";
 import "../styles/pages/Diet.css";
 
@@ -16,6 +17,8 @@ function Diet() {
   const [error, setError] = useState(null);
   const { meals, setMeals, removeFood, calculateMealTotals, calculateDailyTotals } = useDiet();
   const location = useLocation();
+  const dietInputAPI = useDietInputAPI(); // 使用API钩子
+  
   const [currentDate, setCurrentDate] = useState(() => {
     const dateParam = new URLSearchParams(location.search).get('date');
     console.log("Date parameter from URL:", dateParam);
@@ -46,19 +49,13 @@ function Diet() {
   // 当日期变化时，获取该日期的饮食记录
   useEffect(() => {
     const fetchDietData = async () => {
-      // console.log("Current Date:", currentDate);
-      // console.log("Current Date (toDateString):", currentDate.toDateString());
-      // console.log("Current Date (toISOString):", currentDate.toISOString());
-      // console.log("Formatted Date:", 
-      //   `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}`
-      // );
       setLoading(true);
       setError(null);
       
       try {
         const formattedDate = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}`;
         
-        // 不需要传递用户ID，API会使用当前登录用户的ID
+        // 使用更新后的API调用
         const dietData = await dietInputAPI.getUserDietByDate(formattedDate);
         
         if (dietData && Array.isArray(dietData)) {
@@ -85,7 +82,7 @@ function Diet() {
     };
 
     fetchDietData();
-  }, [currentDate, setMeals]);
+  }, [currentDate]);
 
   // 定义餐次类型
   const mealTypes = [
@@ -148,6 +145,26 @@ function Diet() {
     // 使用currentDate作为日期参数
     const formattedDate = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}`;
     navigate(`/food-search?meal=${mealType}&date=${formattedDate}`);
+  };
+  
+  // 处理删除食物项的函数
+  const handleDeleteFoodItem = async (mealType, item) => {
+    console.log("Deleting diet item with ID:", item.dietID);
+    console.log("Item object:", item);
+
+    if (item.dietID) {
+      try {
+        await dietInputAPI.deleteDietInput(item.dietID);
+        console.log("Successfully deleted diet item");
+        removeFood(mealType, item.id);
+      } catch (err) {
+        console.error("Failed to delete item:", err);
+        setError("Failed to delete the item. Please try again.");
+      }
+    } else {
+      // 仅从前端状态移除
+      removeFood(mealType, item.id);
+    }
   };
 
   // 计算营养总计
@@ -218,25 +235,7 @@ function Diet() {
                             </div>
                             <button 
                               className="btn-icon delete-btn"
-                              onClick={() => {
-                                // 打印要删除的 dietId
-                                console.log("Deleting diet item with ID:", item.dietID);
-                                console.log("Item object:", item)
-
-                                if (item.dietID) {
-                                  dietInputAPI.deleteDietInput(item.dietID)
-                                    .then(() => {
-                                      console.log("Successfully deleted diet item");
-                                      removeFood(mealType.id, item.id);
-                                    })
-                                    .catch(err => {
-                                      console.error("Failed to delete item:", err);
-                                    });
-                                } else {
-                                  // 仅从前端状态移除
-                                  removeFood(mealType.id, item.id);
-                                }
-                              }}
+                              onClick={() => handleDeleteFoodItem(mealType.id, item)}
                             >
                               <Trash2 size={16} />
                             </button>
