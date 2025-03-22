@@ -23,14 +23,18 @@ public class User {
     private Integer weight;
     private Integer height;
     private Integer idealWeight;
+    
+    // 新增字段：用户目标类型
+    @Column(length = 20)
+    private String goalType;
 
-    // Default constructor
+    // 默认构造函数
     public User() {
     }
 
-    // Constructor with fields
+    // 包含新字段的构造函数
     public User(String username, String password, String email, Integer age, 
-                Integer weight, Integer height, Integer idealWeight) {
+                Integer weight, Integer height, Integer idealWeight, String goalType) {
         this.username = username;
         this.password = password;
         this.email = email;
@@ -38,9 +42,10 @@ public class User {
         this.weight = weight;
         this.height = height;
         this.idealWeight = idealWeight;
+        this.goalType = goalType;
     }
 
-    // Getters and Setters
+    // 原有的Getters和Setters
     public Integer getUserID() {
         return userID;
     }
@@ -103,5 +108,14 @@ public class User {
 
     public void setIdealWeight(Integer idealWeight) {
         this.idealWeight = idealWeight;
+    }
+    
+    // 新增的Getter和Setter
+    public String getGoalType() {
+        return goalType;
+    }
+
+    public void setGoalType(String goalType) {
+        this.goalType = goalType;
     }
 }

@@ -4,6 +4,7 @@ import MealDistributionChart from './MealDistributionChart';
 import FoodItem from './FoodItem';
 import { recommendationAPI } from '../../api/recommendation';
 import { STORAGE_KEY, processMealData, initialMealData, MEAL_ORDER } from '../constants';
+import api from '../../api/axiosConfig'; // 添加API导入
 import '../../styles/components/recommendations/RecommendationsCard.css';
 
 const RecommendationsCard = ({ userId }) => {
@@ -21,6 +22,36 @@ const RecommendationsCard = ({ userId }) => {
   // 数据处理
   const processedMealData = processMealData(mealData);
   const totalCalories = mealData.reduce((sum, item) => sum + item.value, 0);
+
+  // 从后端获取用户目标类型
+  const fetchUserGoalType = async (uid) => {
+    if (!uid) return;
+    
+    try {
+      // 从用户API获取目标类型
+      const response = await api.get(`/users/${uid}`);
+      const userData = response.data;
+      
+      // 如果用户有目标类型，使用它；否则使用localStorage或默认值
+      if (userData && userData.goalType) {
+        console.log(`Retrieved user goal from backend: ${userData.goalType}`);
+        setRecommendationType(userData.goalType);
+        // 更新localStorage，保持一致性
+        localStorage.setItem("userGoal", userData.goalType);
+      } else {
+        // 回退到localStorage或默认值
+        const localGoal = localStorage.getItem("userGoal") || "loss";
+        console.log(`Using local goal type: ${localGoal} (backend data not available)`);
+        setRecommendationType(localGoal);
+      }
+    } catch (error) {
+      console.error("Failed to fetch user goal type:", error);
+      // 回退到localStorage或默认值
+      const localGoal = localStorage.getItem("userGoal") || "loss";
+      console.log(`Using local goal type: ${localGoal} (after error)`);
+      setRecommendationType(localGoal);
+    }
+  };
 
   // 用户变更时清除本地存储
   useEffect(() => {
@@ -43,8 +74,13 @@ const RecommendationsCard = ({ userId }) => {
       setRecommendedFood(null);
       setRecommendations(null);
       setMealData(initialMealData);
-    } else {
-      // 用户ID相同，尝试从localStorage中恢复状态
+    } 
+    
+    // 获取用户目标类型 - 无论是否为新用户都获取
+    fetchUserGoalType(userId);
+    
+    // 用户ID相同，尝试从localStorage中恢复状态
+    if (savedUserId === userId) {
       initializeFromLocalStorage();
     }
   }, [userId]);
