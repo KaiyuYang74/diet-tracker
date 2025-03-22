@@ -66,6 +66,20 @@ public class UserController {
         }
     }
 
+    // 添加一个新方法来专门更新用户目标类型
+    @PatchMapping("/{id}/goal")
+    public ResponseEntity<User> updateUserGoal(@PathVariable Long id, @RequestBody GoalUpdateRequest goalRequest) {
+        Optional<User> existingUser = userService.getUserById(id);
+        if (existingUser.isPresent()) {
+            User user = existingUser.get();
+            user.setGoalType(goalRequest.getGoalType());
+            User updatedUser = userService.updateUser(user);
+            return new ResponseEntity<>(updatedUser, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         Optional<User> existingUser = userService.getUserById(id);
@@ -74,6 +88,19 @@ public class UserController {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+    
+    // 目标更新请求的内部类
+    public static class GoalUpdateRequest {
+        private String goalType;
+
+        public String getGoalType() {
+            return goalType;
+        }
+
+        public void setGoalType(String goalType) {
+            this.goalType = goalType;
         }
     }
 }

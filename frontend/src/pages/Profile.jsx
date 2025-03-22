@@ -1,31 +1,53 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import BaseLayout from "../layouts/BaseLayout";
+import { useAuth } from "../context/AuthContext";
 import "../styles/theme.css";
 import "../styles/pages/Profile.css";
 
 function Profile() {
   const navigate = useNavigate();
+  const { currentUser, updateUserGoal } = useAuth();
+  const [loading, setLoading] = useState(false);
+  const [saveSuccess, setSaveSuccess] = useState(false);
+  const [error, setError] = useState("");
+  
   const [formData, setFormData] = useState({
     // 基本信息
-    name: "User",
-    email: "user@example.com",
-    dateOfBirth: "1990-01-01",
-    gender: "male",
+    name: "",
+    email: "",
+    dateOfBirth: "",
     // 身体数据
-    currentWeight: "70",
-    targetWeight: "65",
-    height: "175",
+    currentWeight: "",
+    targetWeight: "",
+    height: "",
     // 目标设置
-    goal: "loose" // build, loose, gain, maintain
+    goal: "" // 新增：用户目标类型
   });
 
+  // 可选的目标类型
   const goals = [
-    { id: 'build', label: 'Build Muscle', gradient: "linear-gradient(45deg, #81C784, #66BB6A)" },
-    { id: 'loose', label: 'Loose Weight', gradient: "linear-gradient(45deg, #81C784, #66BB6A)" },
+    { id: 'muscle', label: 'Build Muscle', gradient: "linear-gradient(45deg, #81C784, #66BB6A)" },
+    { id: 'loss', label: 'Loose Weight', gradient: "linear-gradient(45deg, #81C784, #66BB6A)" },
     { id: 'gain', label: 'Gain Weight', gradient: "linear-gradient(45deg, #81C784, #66BB6A)" },
     { id: 'maintain', label: 'Maintain Weight', gradient: "linear-gradient(45deg, #81C784, #66BB6A)" }
   ];
+
+  // 加载用户数据
+  useEffect(() => {
+    if (currentUser && currentUser.id) {
+      // 从currentUser对象获取数据
+      setFormData({
+        name: currentUser.username || "",
+        email: currentUser.email || "",
+        dateOfBirth: currentUser.dateOfBirth || "",
+        currentWeight: currentUser.weight || "",
+        targetWeight: currentUser.idealWeight || "",
+        height: currentUser.height || "",
+        goal: currentUser.goalType || "" // 加载用户目标类型
+      });
+    }
+  }, [currentUser]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -35,10 +57,44 @@ function Profile() {
     }));
   };
 
-  const handleSubmit = () => {
-    // 处理保存逻辑
-    console.log('Saving profile:', formData);
-    navigate('/home');
+  const handleSubmit = async () => {
+    setLoading(true);
+    setSaveSuccess(false);
+    setError("");
+    
+    try {
+      // 保存用户数据到API
+      const api = await import('../api/axiosConfig').then(module => module.default);
+      
+      // 获取当前用户数据
+      const userResponse = await api.get(`/users/${currentUser.id}`);
+      const userData = userResponse.data;
+      
+      // 更新用户数据
+      await api.put(`/users/${currentUser.id}`, {
+        ...userData,
+        username: formData.name,
+        email: formData.email,
+        // dateOfBirth 可能需要格式转换
+        weight: parseInt(formData.currentWeight) || userData.weight,
+        idealWeight: parseInt(formData.targetWeight) || userData.idealWeight,
+        height: parseInt(formData.height) || userData.height,
+        goalType: formData.goal // 更新目标类型
+      });
+      
+      // 如果目标类型有变化，使用AuthContext的方法更新
+      if (formData.goal !== currentUser.goalType) {
+        await updateUserGoal(formData.goal);
+      }
+      
+      setSaveSuccess(true);
+      setTimeout(() => setSaveSuccess(false), 3000); // 3秒后隐藏成功消息
+    } catch (err) {
+      console.error("Error saving profile:", err);
+      setError("Failed to save profile. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -46,6 +102,30 @@ function Profile() {
       <div className="page-container">
         <div className="profile-box">
           <h1>Profile Settings</h1>
+          
+          {error && (
+            <div className="error-message" style={{
+              padding: '10px',
+              margin: '10px 0',
+              backgroundColor: '#fff0f0',
+              borderRadius: '5px',
+              color: '#d32f2f'
+            }}>
+              {error}
+            </div>
+          )}
+          
+          {saveSuccess && (
+            <div className="success-message" style={{
+              padding: '10px',
+              margin: '10px 0',
+              backgroundColor: '#e8f5e9',
+              borderRadius: '5px',
+              color: '#2e7d32'
+            }}>
+              Profile saved successfully!
+            </div>
+          )}
           
           {/* 基本信息卡片 */}
           <div className="card">
@@ -81,29 +161,6 @@ function Profile() {
                 value={formData.dateOfBirth}
                 onChange={handleChange}
               />
-            </div>
-            <div className="form-group">
-              <label className="form-label">Gender</label>
-              <div className="radio-group">
-                <label>
-                  <input
-                    type="radio"
-                    name="gender"
-                    value="male"
-                    checked={formData.gender === "male"}
-                    onChange={handleChange}
-                  /> Male
-                </label>
-                <label>
-                  <input
-                    type="radio"
-                    name="gender"
-                    value="female"
-                    checked={formData.gender === "female"}
-                    onChange={handleChange}
-                  /> Female
-                </label>
-              </div>
             </div>
           </div>
 
@@ -165,11 +222,11 @@ function Profile() {
 
           {/* 操作按钮 */}
           <div className="action-buttons">
-            <button className="btn btn-secondary" onClick={() => navigate(-1)}>
+            <button className="btn btn-secondary" onClick={() => navigate(-1)} disabled={loading}>
               Cancel
             </button>
-            <button className="btn btn-primary" onClick={handleSubmit}>
-              Save Changes
+            <button className="btn btn-primary" onClick={handleSubmit} disabled={loading}>
+              {loading ? "Saving..." : "Save Changes"}
             </button>
           </div>
         </div>

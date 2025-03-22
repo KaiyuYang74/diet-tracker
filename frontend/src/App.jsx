@@ -26,9 +26,18 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           
-          {/* 注册后的引导路由 */}
-          <Route path="/set-goal" element={<SetGoal />} />
-          <Route path="/fill-details" element={<FillDetails />} />
+
+          {/* 注册后的引导路由 - 需要认证 */}
+          <Route path="/set-goal" element={
+            <ProtectedRoute>
+              <SetGoal />
+            </ProtectedRoute>
+          } />
+          <Route path="/fill-details" element={
+            <ProtectedRoute>
+              <FillDetails />
+            </ProtectedRoute>
+          } />
           
           {/* 受保护的路由 - 需要登录 */}
           <Route path="/home" element={
