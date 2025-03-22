@@ -5,6 +5,8 @@ import RecommendationsCard from "../components/recommendations/RecommendationsCa
 import CalorieTrendChart from "../components/charts/CalorieTrendChart";
 import WeightChangeChart from "../components/charts/WeightChangeChart";
 import { trendData, weightData } from "../components/constants";
+import { useAuth } from "../context/AuthContext";
+import api from "../api/axiosConfig"; // 导入配置好的axios实例
 import "../styles/theme.css";
 import "../styles/pages/Home.css";
 
@@ -13,25 +15,94 @@ function Home() {
   const [caloriesToday, setCaloriesToday] = useState(1700);
   const [goalCalories, setGoalCalories] = useState(2000);
   const [exerciseCalories, setExerciseCalories] = useState(0);
-  const [userId, setUserId] = useState(null);
-  
-  // 初始化用户ID - 在实际应用中，这会从身份验证系统或用户会话获取
+  const { currentUser } = useAuth(); // 从认证上下文获取当前用户
+  const [userData, setUserData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  // 加载用户数据
   useEffect(() => {
-    // 从用户会话或API获取当前用户ID
-    const getCurrentUser = async () => {
-      try {
-        // 这里应该是实际的用户认证逻辑
-        // 例如：const user = await authService.getCurrentUser();
-        // 为示例，我们使用模拟数据
-        const mockUserId = localStorage.getItem('currentUserId') || 'user-123';
-        setUserId(mockUserId);
-      } catch (error) {
-        console.error("Failed to get current user:", error);
+    const fetchUserData = async () => {
+      if (currentUser && currentUser.id) {
+        try {
+          setLoading(true);
+          // 修改: 使用api实例，并且简化路径(不需要包含完整URL)
+          const response = await api.get(`/users/${currentUser.id}`);
+          setUserData(response.data);
+          
+          // 如果API返回了目标卡路里，更新状态
+          if (response.data.goalCalories) {
+            setGoalCalories(response.data.goalCalories);
+          }
+          
+          // 加载今日卡路里摄入
+          await fetchTodayCalories();
+          
+        } catch (err) {
+          console.error("Failed to fetch user data:", err);
+          setError("无法加载用户数据，请稍后重试");
+        } finally {
+          setLoading(false);
+        }
       }
     };
 
-    getCurrentUser();
-  }, []); 
+    const fetchTodayCalories = async () => {
+      try {
+        // 获取今日日期
+        const today = new Date();
+        const formattedDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+        
+        // 修改: 使用api实例，并且简化路径
+        const dietResponse = await api.get(`/diet/input`, {
+          params: { userId: currentUser.id, date: formattedDate }
+        });
+        
+        // 计算今日总卡路里
+        if (dietResponse.data && Array.isArray(dietResponse.data)) {
+          const totalCalories = dietResponse.data.reduce((sum, item) => sum + item.calories, 0);
+          setCaloriesToday(totalCalories);
+        }
+        
+        // 修改: 使用api实例，并且简化路径
+        const exerciseResponse = await api.get(`/exercise/input`, {
+          params: { userId: currentUser.id, date: formattedDate }
+        });
+        
+        // 计算今日运动消耗
+        if (exerciseResponse.data && Array.isArray(exerciseResponse.data)) {
+          const totalExerciseCalories = exerciseResponse.data.reduce((sum, item) => sum + item.calories, 0);
+          setExerciseCalories(totalExerciseCalories);
+        }
+      } catch (err) {
+        console.error("Failed to fetch daily data:", err);
+      }
+    };
+
+    fetchUserData();
+  }, [currentUser]);
+
+  // 显示加载中状态
+  if (loading) {
+    return (
+      <BaseLayout>
+        <div className="page-container">
+          <div className="loading-state">加载中...</div>
+        </div>
+      </BaseLayout>
+    );
+  }
+
+  // 显示错误状态
+  if (error) {
+    return (
+      <BaseLayout>
+        <div className="page-container">
+          <div className="error-state">{error}</div>
+        </div>
+      </BaseLayout>
+    );
+  }
 
   return (
     <BaseLayout>
@@ -45,7 +116,7 @@ function Home() {
           />
 
           {/* AI推荐 */}
-          {userId && <RecommendationsCard userId={userId} />}
+          {currentUser && <RecommendationsCard userId={currentUser.id} />}
 
           {/* 卡路里趋势图 */}
           <CalorieTrendChart data={trendData} />
