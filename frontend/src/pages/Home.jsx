@@ -12,9 +12,10 @@ import "../styles/pages/Home.css";
 
 function Home() {
   // 全局状态
-  const [caloriesToday, setCaloriesToday] = useState(1700);
+  const [caloriesToday, setCaloriesToday] = useState(0);
   const [goalCalories, setGoalCalories] = useState(2000);
   const [exerciseCalories, setExerciseCalories] = useState(0);
+  const [remainingCalories, setRemainingCalories] = useState(0);
   const { currentUser } = useAuth(); // 从认证上下文获取当前用户
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -53,29 +54,42 @@ function Home() {
         const today = new Date();
         const formattedDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
         
-        // 修改: 使用api实例，并且简化路径
+        // 获取饮食数据
         const dietResponse = await api.get(`/diet/input`, {
           params: { userId: currentUser.id, date: formattedDate }
         });
         
-        // 计算今日总卡路里
+        // 计算今日总卡路里摄入
+        let foodCalories = 0;
         if (dietResponse.data && Array.isArray(dietResponse.data)) {
-          const totalCalories = dietResponse.data.reduce((sum, item) => sum + item.calories, 0);
-          setCaloriesToday(totalCalories);
+          foodCalories = dietResponse.data.reduce((sum, item) => sum + item.calories, 0);
+          setCaloriesToday(foodCalories);
+        } else {
+          setCaloriesToday(0);
         }
         
-        // 修改: 使用api实例，并且简化路径
+        // 获取运动数据
         const exerciseResponse = await api.get(`/exercise/input`, {
           params: { userId: currentUser.id, date: formattedDate }
         });
         
         // 计算今日运动消耗
+        let burnedCalories = 0;
         if (exerciseResponse.data && Array.isArray(exerciseResponse.data)) {
-          const totalExerciseCalories = exerciseResponse.data.reduce((sum, item) => sum + item.calories, 0);
-          setExerciseCalories(totalExerciseCalories);
+          burnedCalories = exerciseResponse.data.reduce((sum, item) => sum + item.calories, 0);
+          setExerciseCalories(burnedCalories);
+        } else {
+          setExerciseCalories(0);
         }
+
+        // 计算剩余卡路里
+        const remaining = goalCalories - foodCalories + burnedCalories;
+        setRemainingCalories(remaining);
       } catch (err) {
         console.error("Failed to fetch daily data:", err);
+        setCaloriesToday(0);
+        setExerciseCalories(0);
+        setRemainingCalories(goalCalories);
       }
     };
 
@@ -113,6 +127,7 @@ function Home() {
             caloriesToday={caloriesToday}
             goalCalories={goalCalories}
             exerciseCalories={exerciseCalories}
+            remainingCalories={remainingCalories}
           />
 
           {/* AI推荐 */}
@@ -122,7 +137,7 @@ function Home() {
           <CalorieTrendChart data={trendData} />
 
           {/* 体重变化图 */}
-          <WeightChangeChart data={weightData} />
+          <WeightChangeChart />
         </div>
       </div>
     </BaseLayout>

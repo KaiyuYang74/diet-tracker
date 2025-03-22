@@ -1,0 +1,80 @@
+/* 体重记录输入面板 */
+.weight-input-panel {
+    padding: var(--space-3);
+    margin: 0 var(--space-3) var(--space-3);
+    background-color: var(--neutral-50);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+  }
+  
+  .weight-input-panel form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+  
+  /* 最近体重记录列表 */
+  .recent-weights {
+    padding: var(--space-3);
+    margin: var(--space-3);
+    border-top: 1px solid var(--neutral-200);
+  }
+  
+  .recent-weights h4 {
+    font-size: 0.95rem;
+    color: var(--neutral-700);
+    margin-bottom: var(--space-2);
+  }
+  
+  .weight-records-list {
+    margin-top: 10px;
+  }
+  
+  .weight-record-grid {
+    display: grid;
+    width: 100%;
+  }
+  
+  .weight-record-item {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--neutral-200);
+  }
+  
+  .weight-record-date {
+    text-align: left;
+    font-size: 0.85rem;
+    color: var(--neutral-600);
+  }
+  
+  .weight-record-value {
+    text-align: center;
+    font-weight: 500;
+    color: var(--neutral-900);
+  }
+  
+  .weight-record-diff-container {
+    text-align: right;
+  }
+  
+  .weight-record-diff {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+  }
+  
+  .weight-record-diff.up {
+    color: #fff;
+    background-color: rgba(244, 67, 54, 0.7);
+  }
+  
+  .weight-record-diff.down {
+    color: #fff;
+    background-color: rgba(76, 175, 80, 0.7);
+  }
+  
+  .weight-record-diff.empty {
+    min-height: 1.5em;
+  }
