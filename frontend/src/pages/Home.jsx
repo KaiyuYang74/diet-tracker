@@ -4,9 +4,8 @@ import CaloriesCard from "../components/calories/CaloriesCard";
 import RecommendationsCard from "../components/recommendations/RecommendationsCard";
 import CalorieTrendChart from "../components/charts/CalorieTrendChart";
 import WeightChangeChart from "../components/charts/WeightChangeChart";
-import { trendData, weightData } from "../components/constants";
 import { useAuth } from "../context/AuthContext";
-import api from "../api/axiosConfig"; // 导入配置好的axios实例
+import api from "../api/axiosConfig";
 import "../styles/theme.css";
 import "../styles/pages/Home.css";
 
@@ -16,7 +15,8 @@ function Home() {
   const [goalCalories, setGoalCalories] = useState(2000);
   const [exerciseCalories, setExerciseCalories] = useState(0);
   const [remainingCalories, setRemainingCalories] = useState(0);
-  const { currentUser } = useAuth(); // 从认证上下文获取当前用户
+  const [calorieTrendData, setCalorieTrendData] = useState([]);
+  const { currentUser } = useAuth(); 
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -27,7 +27,6 @@ function Home() {
       if (currentUser && currentUser.id) {
         try {
           setLoading(true);
-          // 修改: 使用api实例，并且简化路径(不需要包含完整URL)
           const response = await api.get(`/users/${currentUser.id}`);
           setUserData(response.data);
           
@@ -134,7 +133,7 @@ function Home() {
           {currentUser && <RecommendationsCard userId={currentUser.id} />}
 
           {/* 卡路里趋势图 */}
-          <CalorieTrendChart data={trendData} />
+          <CalorieTrendChart goalCalories={goalCalories} />
 
           {/* 体重变化图 */}
           <WeightChangeChart />
