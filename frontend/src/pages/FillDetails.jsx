@@ -3,13 +3,14 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import BaseLayout from "../layouts/BaseLayout";
 import { useAuth } from "../context/AuthContext";
-import api from "../api/axiosConfig"; // 添加API导入
+import api from "../api/axiosConfig";
+import { calculateAge } from "../utils/dateUtils";
 import "../styles/auth.css";
 import "../styles/pages/FillDetails.css";
 
 function FillDetails() {
   const navigate = useNavigate();
-  const { currentUser, isAuthenticated } = useAuth(); // 获取认证状态
+  const { currentUser, isAuthenticated } = useAuth();
   
   const [formData, setFormData] = useState({
     dateOfBirth: "",
@@ -32,7 +33,7 @@ function FillDetails() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // 表单验证 - 已移除gender字段的检查
+    // 表单验证
     if (!formData.dateOfBirth || !formData.weight || 
         !formData.targetWeight || !formData.height) {
       setError("Please fill in all required fields");
@@ -43,38 +44,29 @@ function FillDetails() {
     setError("");
     
     try {
-      // 计算年龄
-      const birthDate = new Date(formData.dateOfBirth);
-      const today = new Date();
-      let age = today.getFullYear() - birthDate.getFullYear();
-      const monthDiff = today.getMonth() - birthDate.getMonth();
-      if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-        age--;
-      }
+      // 计算年龄 - 使用工具函数
+      const age = calculateAge(formData.dateOfBirth);
       
       // 使用用户更新API保存详细信息
       if (currentUser && currentUser.id) {
-        // 从后端获取当前用户信息
         const userResponse = await api.get(`/users/${currentUser.id}`);
         const userData = userResponse.data;
         
-        // 更新用户数据
+        // 直接使用表单中的日期字符串
         await api.put(`/users/${currentUser.id}`, {
-          ...userData, // 保留原有信息
-          age: age, // 年龄计算
+          ...userData,
+          age: age,
+          dateOfBirth: formData.dateOfBirth,
           weight: parseInt(formData.weight),
           height: parseInt(formData.height),
           idealWeight: parseInt(formData.targetWeight),
         });
-        
-        console.log("User details saved successfully");
         
         // 确认认证状态后再导航
         if (isAuthenticated) {
           navigate("/home");
         } else {
           setError("Authentication issue. Please try logging in again.");
-          console.error("User not authenticated after registration flow");
         }
       } else {
         throw new Error("User ID not available");
@@ -115,8 +107,6 @@ function FillDetails() {
               onChange={handleChange}
               disabled={loading}
             />
-            
-            {/* 性别选择部分已移除 */}
 
             <input 
               type="number" 

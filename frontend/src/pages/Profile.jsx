@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import BaseLayout from "../layouts/BaseLayout";
 import { useAuth } from "../context/AuthContext";
+import api from "../api/axiosConfig";
+import { calculateAge } from "../utils/dateUtils";
 import "../styles/theme.css";
 import "../styles/pages/Profile.css";
 
@@ -22,7 +24,7 @@ function Profile() {
     targetWeight: "",
     height: "",
     // 目标设置
-    goal: "" // 新增：用户目标类型
+    goal: "" // 用户目标类型
   });
 
   // 可选的目标类型
@@ -33,22 +35,7 @@ function Profile() {
     { id: 'maintain', label: 'Maintain Weight', gradient: "linear-gradient(45deg, #81C784, #66BB6A)" }
   ];
 
-  // 加载用户数据
-  useEffect(() => {
-    if (currentUser && currentUser.id) {
-      // 从currentUser对象获取数据
-      setFormData({
-        name: currentUser.username || "",
-        email: currentUser.email || "",
-        dateOfBirth: currentUser.dateOfBirth || "",
-        currentWeight: currentUser.weight || "",
-        targetWeight: currentUser.idealWeight || "",
-        height: currentUser.height || "",
-        goal: currentUser.goalType || "" // 加载用户目标类型
-      });
-    }
-  }, [currentUser]);
-
+  // 处理表单变更
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -57,30 +44,72 @@ function Profile() {
     }));
   };
 
+  // 加载用户数据
+  useEffect(() => {
+    const loadUserProfile = async () => {
+      if (currentUser && currentUser.id) {
+        setLoading(true);
+        
+        try {
+          const response = await api.get(`/users/${currentUser.id}`);
+          const userData = response.data;
+
+          console.log('Received User Data:', userData);
+          console.log('Received DateOfBirth:', userData.dateOfBirth);
+          
+          // 直接使用后端返回的日期字符串
+          setFormData({
+            name: userData.username || "",
+            email: userData.email || "",
+            dateOfBirth: userData.dateOfBirth || "", // 直接使用日期字符串
+            currentWeight: userData.weight ? userData.weight.toString() : "",
+            targetWeight: userData.idealWeight ? userData.idealWeight.toString() : "",
+            height: userData.height ? userData.height.toString() : "",
+            goal: userData.goalType || ""
+          });
+        } catch (err) {
+          console.error("加载用户数据失败:", err);
+          setError("无法加载用户数据，请刷新页面重试。");
+        } finally {
+          setLoading(false);
+        }
+      }
+    };
+    
+    loadUserProfile();
+  }, [currentUser]);
+
   const handleSubmit = async () => {
     setLoading(true);
     setSaveSuccess(false);
     setError("");
     
     try {
-      // 保存用户数据到API
-      const api = await import('../api/axiosConfig').then(module => module.default);
-      
       // 获取当前用户数据
+      console.log('Input Date:', formData.dateOfBirth);
       const userResponse = await api.get(`/users/${currentUser.id}`);
       const userData = userResponse.data;
       
-      // 更新用户数据
-      await api.put(`/users/${currentUser.id}`, {
+      // 计算年龄 - 使用工具函数
+      const age = calculateAge(formData.dateOfBirth);
+      
+      // 构建更新对象 - 直接使用日期字符串
+      const updatedUser = {
         ...userData,
         username: formData.name,
         email: formData.email,
-        // dateOfBirth 可能需要格式转换
+        age: age,
+        dateOfBirth: formData.dateOfBirth || null,
         weight: parseInt(formData.currentWeight) || userData.weight,
-        idealWeight: parseInt(formData.targetWeight) || userData.idealWeight,
         height: parseInt(formData.height) || userData.height,
-        goalType: formData.goal // 更新目标类型
-      });
+        idealWeight: parseInt(formData.targetWeight) || userData.idealWeight,
+        goalType: formData.goal
+      };
+
+      console.log('Sending User Data:', updatedUser);
+      
+      // 发送更新请求
+      await api.put(`/users/${currentUser.id}`, updatedUser);
       
       // 如果目标类型有变化，使用AuthContext的方法更新
       if (formData.goal !== currentUser.goalType) {
@@ -88,10 +117,10 @@ function Profile() {
       }
       
       setSaveSuccess(true);
-      setTimeout(() => setSaveSuccess(false), 3000); // 3秒后隐藏成功消息
+      setTimeout(() => setSaveSuccess(false), 3000);
     } catch (err) {
-      console.error("Error saving profile:", err);
-      setError("Failed to save profile. Please try again.");
+      console.error("保存个人信息错误:", err);
+      setError("保存个人信息失败，请重试。");
     } finally {
       setLoading(false);
     }
