@@ -26,16 +26,17 @@ const WeightChangeChart = () => {
       // 转换数据格式为图表所需格式并确保按日期降序排序
       const formattedData = records
         .map(record => {
-          // 确保使用本地时区解析日期
-          const recordDate = new Date(record.recordDate);
+          const [year, month, day] = record.recordDate.split('-').map(Number);
+          const localDate = new Date(year, month - 1, day); // 确保用本地时区构造
           return {
-            date: formatDate(recordDate),
-            fullDate: recordDate,
+            date: localDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }), // "Mar 21"
             weight: record.weight,
-            id: record.id
+            id: record.id,
+            fullDate: localDate
           };
         })
-        .sort((a, b) => b.fullDate - a.fullDate); // 按日期降序排序，最新的在前面
+        .sort((a, b) => a.fullDate - b.fullDate);
+    
       
       setWeightData(formattedData);
     } catch (err) {
@@ -46,11 +47,7 @@ const WeightChangeChart = () => {
     }
   };
   
-  // 格式化日期为显示格式 - 使用本地时区
-  const formatDate = (date) => {
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-  };
-  
+
   // 格式化日期为API所需格式 (YYYY-MM-DD) - 确保使用本地时区
   const formatDateForAPI = (date) => {
     const year = date.getFullYear();

@@ -15,7 +15,7 @@ const CaloriesCard = ({ caloriesToday, goalCalories, exerciseCalories, remaining
       
       {/* 卡路里环形图 - 现在使用剩余卡路里 */}
       <CaloriesRing 
-        current={remainingCalories}
+        current={caloriesToday - exerciseCalories}
         goal={goalCalories}
       />
 

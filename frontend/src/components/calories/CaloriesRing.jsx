@@ -3,16 +3,15 @@ import React from 'react';
 const CaloriesRing = ({ current, goal }) => {
   // 确定颜色
   const getColor = () => {
-    // 剩余卡路里逻辑：负值为红色，低值为黄色，正常值为绿色
-    if (current < 0) return "#ff7875"; // 负值显示红色
-    if (current < goal * 0.2) return "#faad14"; // 少于20%显示黄色警告
+    if (current < 0) return "transparent"; // 负值不显示颜色
+    if (current > goal) return "#ff7875"; // 超过目标显示红色
     return "#82ca9d"; // 正常显示绿色
   };
 
   // 计算环形图进度 - 剩余卡路里/目标卡路里
   const calculateProgress = () => {
     // 确保进度在0-1之间
-    return Math.max(0, Math.min(current / goal, 1));
+    return Math.min(current / goal, 1);
   };
 
   return (
