@@ -11,6 +11,8 @@ export function useExerciseAPI() {
   const apiRef = useRef({
     // 添加运动记录
     addExerciseInput: async (exerciseInput) => {
+      const userId = localStorage.getItem('userId');
+
       try {
         // 确保使用当前登录用户的ID
         if (!userId) {
