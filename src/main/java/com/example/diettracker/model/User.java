@@ -1,6 +1,7 @@
 package com.example.diettracker.model;
 
 import jakarta.persistence.*;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "User")
@@ -23,8 +24,11 @@ public class User {
     private Integer weight;
     private Integer height;
     private Integer idealWeight;
-    
-    // 新增字段：用户目标类型
+
+    // 使用 LocalDate 替代 java.util.Date
+    @Column
+    private LocalDate dateOfBirth;
+
     @Column(length = 20)
     private String goalType;
 
@@ -32,9 +36,9 @@ public class User {
     public User() {
     }
 
-    // 包含新字段的构造函数
-    public User(String username, String password, String email, Integer age, 
-                Integer weight, Integer height, Integer idealWeight, String goalType) {
+    // 包含所有字段的构造函数
+    public User(String username, String password, String email, Integer age,
+                Integer weight, Integer height, Integer idealWeight, String goalType, LocalDate dateOfBirth) {
         this.username = username;
         this.password = password;
         this.email = email;
@@ -43,9 +47,11 @@ public class User {
         this.height = height;
         this.idealWeight = idealWeight;
         this.goalType = goalType;
+        this.dateOfBirth = dateOfBirth;
     }
 
-    // 原有的Getters和Setters
+    // Getters and Setters
+
     public Integer getUserID() {
         return userID;
     }
@@ -109,8 +115,15 @@ public class User {
     public void setIdealWeight(Integer idealWeight) {
         this.idealWeight = idealWeight;
     }
-    
-    // 新增的Getter和Setter
+
+    public LocalDate getDateOfBirth() {
+        return dateOfBirth;
+    }
+
+    public void setDateOfBirth(LocalDate dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
+    }
+
     public String getGoalType() {
         return goalType;
     }
