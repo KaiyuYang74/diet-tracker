@@ -29,15 +29,41 @@ function Home() {
           setLoading(true);
           const response = await api.get(`/users/${currentUser.id}`);
           setUserData(response.data);
-          
-          // 如果API返回了目标卡路里，更新状态
-          if (response.data.goalCalories) {
-            setGoalCalories(response.data.goalCalories);
+
+          // 计算目标卡路里
+          const userWeight = response.data.weight || 70; // 默认体重70kg
+          const userHeight = response.data.height || 170; // 默认身高170cm
+          const userAge = response.data.age || 30; // 默认年龄30
+          const goalType = response.data.goalType || 'loss'; // 默认目标类型
+
+          // 计算BMR (基础代谢率 - Mifflin-St Jeor公式)
+          const bmr = (10 * userWeight) + (6.25 * userHeight) - (5 * userAge) + 5;
+
+          // 计算TDEE (总能量消耗 - 活动系数1.55)
+          const tdee = bmr * 1.55;
+
+          // 根据目标类型调整卡路里目标
+          let calculatedGoalCalories;
+          switch(goalType) {
+            case 'loss':
+              calculatedGoalCalories = Math.round(tdee - 500); // 减重目标
+              break;
+            case 'gain':
+              calculatedGoalCalories = Math.round(tdee + 300); // 增重目标
+              break;
+            case 'muscle':
+              calculatedGoalCalories = Math.round(tdee); // 增肌目标
+              break;
+            default:
+              calculatedGoalCalories = Math.round(tdee);
           }
-          
-          // 加载今日卡路里摄入
-          await fetchTodayCalories();
-          
+
+          console.log("计算的目标卡路里:", calculatedGoalCalories, "基于:", {weight: userWeight, height: userHeight, age: userAge, goal: goalType});
+          setGoalCalories(calculatedGoalCalories);
+
+          // 使用计算出的目标卡路里加载今日卡路里摄入
+          await fetchTodayCalories(calculatedGoalCalories);
+
         } catch (err) {
           console.error("Failed to fetch user data:", err);
           setError("无法加载用户数据，请稍后重试");
@@ -47,17 +73,17 @@ function Home() {
       }
     };
 
-    const fetchTodayCalories = async () => {
+    const fetchTodayCalories = async (calculatedGoal) => {
       try {
         // 获取今日日期
         const today = new Date();
         const formattedDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
-        
+
         // 获取饮食数据
         const dietResponse = await api.get(`/diet/input`, {
           params: { userId: currentUser.id, date: formattedDate }
         });
-        
+
         // 计算今日总卡路里摄入
         let foodCalories = 0;
         if (dietResponse.data && Array.isArray(dietResponse.data)) {
@@ -66,12 +92,12 @@ function Home() {
         } else {
           setCaloriesToday(0);
         }
-        
+
         // 获取运动数据
         const exerciseResponse = await api.get(`/exercise/input`, {
           params: { userId: currentUser.id, date: formattedDate }
         });
-        
+
         // 计算今日运动消耗
         let burnedCalories = 0;
         if (exerciseResponse.data && Array.isArray(exerciseResponse.data)) {
@@ -81,8 +107,11 @@ function Home() {
           setExerciseCalories(0);
         }
 
+        // 使用传入的计算目标或状态中的目标卡路里
+        const calcGoal = calculatedGoal || goalCalories;
         // 计算剩余卡路里
-        const remaining = goalCalories - foodCalories + burnedCalories;
+        const remaining = calcGoal - foodCalories + burnedCalories;
+        console.log("计算剩余卡路里:", remaining, "基于:", {goal: calcGoal, food: foodCalories, exercise: burnedCalories});
         setRemainingCalories(remaining);
       } catch (err) {
         console.error("Failed to fetch daily data:", err);
