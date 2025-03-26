@@ -1,4 +1,3 @@
-// src/pages/Diet.jsx
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import BaseLayout from "../layouts/BaseLayout";
@@ -6,6 +5,7 @@ import { Edit2, Plus, Trash2 } from 'lucide-react';
 import { useDiet } from "../context/DietContext";
 import DateNavigation from "../components/DateNavigation";
 import { useDietInputAPI } from "../api/dietInput"; // 更新API导入
+import api from "../api/axiosConfig";
 import "../styles/theme.css";
 import "../styles/pages/Diet.css";
 
@@ -36,15 +36,16 @@ function Diet() {
     return new Date();
   });
 
-  // 营养目标数据
-  const nutritionGoals = {
+
+// 营养目标数据也改为状态变量
+  const [nutritionGoals, setNutritionGoals] = useState({
     calories: 2000,
     carbs: 250,
     fat: 67,
     protein: 100,
     sodium: 2300,
     sugar: 50
-  };
+  });
 
   // 当日期变化时，获取该日期的饮食记录
   useEffect(() => {
@@ -84,13 +85,84 @@ function Diet() {
     fetchDietData();
   }, [currentDate]);
 
+  // 添加此useEffect用于计算目标卡路里
+  useEffect(() => {
+    const calculateTargetCalories = async () => {
+      // 从localStorage获取用户ID
+      const userId = localStorage.getItem('userId');
+      if (!userId) return;
+
+      try {
+        // 获取用户数据
+        const response = await api.get(`/users/${userId}`);
+        const userData = response.data;
+
+        // 提取用户基本信息，设置默认值以防数据缺失
+        const userWeight = userData.weight || 70;
+        const userHeight = userData.height || 170;
+        const userAge = userData.age || 30;
+        const goalType = userData.goalType || 'loss';
+
+        console.log("用户数据:", {weight: userWeight, height: userHeight, age: userAge, goal: goalType});
+
+        // 计算基础代谢率(BMR) - Mifflin-St Jeor公式
+        const bmr = (10 * userWeight) + (6.25 * userHeight) - (5 * userAge) + 5;
+
+        // 计算每日总能量消耗(TDEE)，使用中等活动水平系数1.55
+        const tdee = bmr * 1.55;
+
+        // 根据目标类型调整卡路里
+        let targetCalories;
+        switch(goalType) {
+          case 'loss': // 减重目标
+            targetCalories = Math.round(tdee - 500);
+            break;
+          case 'gain': // 增重目标
+            targetCalories = Math.round(tdee + 300);
+            break;
+          case 'muscle': // 增肌目标
+            targetCalories = Math.round(tdee);
+            break;
+          default:
+            targetCalories = Math.round(tdee);
+        }
+
+        console.log("计算的目标卡路里:", targetCalories);
+
+        // 更新营养目标
+        setNutritionGoals(prev => ({
+          ...prev,
+          calories: targetCalories,
+          // 根据新的卡路里目标计算碳水、脂肪和蛋白质
+          carbs: Math.round(targetCalories * 0.5 / 4), // 50%碳水，每克4卡路里
+          protein: Math.round(targetCalories * 0.2 / 4), // 20%蛋白质，每克4卡路里
+          fat: Math.round(targetCalories * 0.3 / 9), // 30%脂肪，每克9卡路里
+        }));
+
+        // 更新餐次目标卡路里
+        setMealTypes([
+          { id: 'breakfast', name: 'Breakfast', targetCalories: Math.round(targetCalories * 0.3) }, // 早餐30%
+          { id: 'lunch', name: 'Lunch', targetCalories: Math.round(targetCalories * 0.4) }, // 午餐40%
+          { id: 'dinner', name: 'Dinner', targetCalories: Math.round(targetCalories * 0.3) }, // 晚餐30%
+          { id: 'snacks', name: 'Snacks', targetCalories: Math.round(targetCalories * 0.1) } // 零食10%
+        ]);
+      } catch (error) {
+        console.error("计算目标卡路里时出错:", error);
+      }
+    };
+
+    // 调用计算函数
+    calculateTargetCalories();
+  }, []); // 空依赖数组，组件挂载时只执行一次
+
   // 定义餐次类型
-  const mealTypes = [
+// 将硬编码的餐次变为状态变量
+  const [mealTypes, setMealTypes] = useState([
     { id: 'breakfast', name: 'Breakfast', targetCalories: 600 },
     { id: 'lunch', name: 'Lunch', targetCalories: 700 },
     { id: 'dinner', name: 'Dinner', targetCalories: 500 },
     { id: 'snacks', name: 'Snacks', targetCalories: 200 }
-  ];
+  ]);
 
   // 处理从后端获取的饮食数据
   const processDietData = (dietData) => {
