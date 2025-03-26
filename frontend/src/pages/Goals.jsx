@@ -21,8 +21,8 @@ function Goals() {
   // 餐次分配常量
   const MEAL_DISTRIBUTION = {
     breakfast: 30,
-    lunch: 35,
-    dinner: 35,
+    lunch: 40,
+    dinner: 30,
   };
 
   // 零食卡路里计算 - 额外的10%
