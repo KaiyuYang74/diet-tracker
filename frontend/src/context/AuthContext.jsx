@@ -253,28 +253,28 @@ export function AuthProvider({ children }) {
   };
 
   // 更新用户信息
-  const updateUserProfile = async (updatedData) => {
+  const updatePassword = async (passwords) => {
     if (!currentUser || !currentUser.id) return false;
     
     try {
       // 获取当前用户数据
       const userResponse = await api.get(`/users/${currentUser.id}`);
       const userData = userResponse.data;
-      
-      // 合并数据
-      const updatedUser = {
-        ...userData,
-        ...updatedData
-      };
+
+      if (userData.password !== passwords.oldPassword){
+        return false;
+      }
+      userData.password = passwords.newPassword;
       
       // 发送更新请求
-      await api.put(`/users/${currentUser.id}`, updatedUser);
+      await api.put(`/users/${currentUser.id}`, userData);
       
       // 更新本地状态
       setCurrentUser(prev => ({
         ...prev,
-        ...updatedData
+        ...userData
       }));
+      setToken(null);
       
       return true;
     } catch (error) {
@@ -290,6 +290,7 @@ export function AuthProvider({ children }) {
     return !!(storedToken && userId);
   };
 
+
   // 提供上下文值
   const value = {
     currentUser,
@@ -299,7 +300,7 @@ export function AuthProvider({ children }) {
     logout,
     register,
     updateUserGoal,
-    updateUserProfile,
+    updatePassword,
     checkAuthenticated,
     isAuthenticated: !!currentUser
   };

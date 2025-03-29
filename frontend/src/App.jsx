@@ -15,6 +15,7 @@ import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
 import FoodSearch from "./pages/FoodSearch";
 import NotFound from './pages/NotFound';
+import PasswordChange from './pages/PasswordChange';
 
 function App() {
   return (
@@ -73,6 +74,11 @@ function App() {
           <Route path="/food-search" element={
             <ProtectedRoute>
               <FoodSearch />
+            </ProtectedRoute>
+          } />
+          <Route path="/password-change" element={
+            <ProtectedRoute>
+              <PasswordChange />
             </ProtectedRoute>
           } />
 
