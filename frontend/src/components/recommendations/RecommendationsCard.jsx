@@ -22,33 +22,66 @@ const RecommendationsCard = ({ userId }) => {
   // 数据处理
   const processedMealData = processMealData(mealData);
   const totalCalories = mealData.reduce((sum, item) => sum + item.value, 0);
-
+  const [totalDayCalories, setTotalDayCalories] = useState(2000); // 默认为2000卡路里
   // 从后端获取用户目标类型
   const fetchUserGoalType = async (uid) => {
     if (!uid) return;
-    
+
     try {
       // 从用户API获取目标类型
       const response = await api.get(`/users/${uid}`);
       const userData = response.data;
-      
-      // 如果用户有目标类型，使用它；否则使用localStorage或默认值
-      if (userData && userData.goalType) {
-        console.log(`Retrieved user goal from backend: ${userData.goalType}`);
-        setRecommendationType(userData.goalType);
-        // 更新localStorage，保持一致性
-        localStorage.setItem("userGoal", userData.goalType);
+
+      // 如果用户有数据，计算每日卡路里需求
+      if (userData) {
+        const weight = userData.weight || 70;
+        const height = userData.height || 170;
+        const age = userData.age || 30;
+
+        // 计算BMR (基础代谢率)
+        const bmr = (10 * weight) + (6.25 * height) - (5 * age) + 5;
+
+        // 计算TDEE (总能量消耗)
+        const tdee = bmr * 1.55;
+
+        // 根据目标类型调整卡路里目标
+        let goalCalories;
+        if (userData.goalType === 'loss') {
+          goalCalories = Math.round(tdee - 500); // 减重目标
+        } else if (userData.goalType === 'gain') {
+          goalCalories = Math.round(tdee + 300); // 增重目标
+        } else if (userData.goalType === 'muscle') {
+          goalCalories = Math.round(tdee); // 增肌目标
+        } else {
+          goalCalories = Math.round(tdee); // 默认维持目标
+        }
+
+        console.log("设置总卡路里需求为:", goalCalories);
+        setTotalDayCalories(goalCalories);
+
+        // 设置目标类型
+        if (userData.goalType) {
+          console.log(`从后端获取用户目标: ${userData.goalType}`);
+          setRecommendationType(userData.goalType);
+          // 更新localStorage，保持一致性
+          localStorage.setItem("userGoal", userData.goalType);
+        } else {
+          // 回退到localStorage或默认值
+          const localGoal = localStorage.getItem("userGoal") || "loss";
+          console.log(`使用本地目标类型: ${localGoal} (后端数据不可用)`);
+          setRecommendationType(localGoal);
+        }
       } else {
         // 回退到localStorage或默认值
         const localGoal = localStorage.getItem("userGoal") || "loss";
-        console.log(`Using local goal type: ${localGoal} (backend data not available)`);
+        console.log(`使用本地目标类型: ${localGoal} (未找到后端数据)`);
         setRecommendationType(localGoal);
       }
     } catch (error) {
-      console.error("Failed to fetch user goal type:", error);
+      console.error("获取用户目标类型失败:", error);
       // 回退到localStorage或默认值
       const localGoal = localStorage.getItem("userGoal") || "loss";
-      console.log(`Using local goal type: ${localGoal} (after error)`);
+      console.log(`使用本地目标类型: ${localGoal} (发生错误后)`);
       setRecommendationType(localGoal);
     }
   };
@@ -179,20 +212,44 @@ const RecommendationsCard = ({ userId }) => {
       setRecommendations(data);
       
       // 更新饼图数据，按固定顺序处理
-      const updatedMealData = MEAL_ORDER.map(mealName => ({
-        name: mealName,
-        value: data[mealName.toLowerCase()] 
-          ? data[mealName.toLowerCase()].length * (
-              mealName === 'Breakfast' ? 150 : 
-              mealName === 'Lunch' ? 200 : 
-              180
-            )
-          : (
+      const updatedMealData = MEAL_ORDER.map(mealName => {
+        const mealKey = mealName.toLowerCase();
+        const mealItems = data[mealKey] || [];
+
+        // 为每餐设置基于用户总卡路里需求的分配
+        let percentage;
+        let baseCalories;
+
+        switch(mealName) {
+          case 'Breakfast':
+            percentage = 0.3; // 早餐占30%
+            break;
+          case 'Lunch':
+            percentage = 0.4; // 午餐占40%
+            break;
+          case 'Dinner':
+            percentage = 0.3; // 晚餐占30%
+            break;
+          default:
+            percentage = 0.3;
+        }
+
+        // 计算基于用户总卡路里需求的每餐卡路里
+        baseCalories = Math.round(totalDayCalories * percentage);
+
+        console.log(`${mealName} 分配: ${baseCalories}卡路里 (${percentage*100}% of ${totalDayCalories})`);
+
+        // 如果有推荐食物，使用计算的卡路里值；否则使用默认值
+        return {
+          name: mealName,
+          value: mealItems.length > 0 ? baseCalories : (
               mealName === 'Breakfast' ? 400 :
-              mealName === 'Lunch' ? 600 : 
-              500
-            )
-      }));
+                  mealName === 'Lunch' ? 600 :
+                      500
+          )
+        };
+      });
+
 
       setMealData(updatedMealData);
       
