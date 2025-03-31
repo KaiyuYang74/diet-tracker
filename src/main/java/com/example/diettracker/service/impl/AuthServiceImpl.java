@@ -27,7 +27,7 @@ public class AuthServiceImpl implements AuthService {
             return "User registration failed!";
         }
         userRepository.save(user);
-        return "New user registered successfully!";
+        return "New user registered successfully!" + "|" + user.getUserID();
     }
 
     @Override
@@ -41,7 +41,6 @@ public class AuthServiceImpl implements AuthService {
             return "Invalid credentials!";
         }
 
-        JwtUtil.generateToken(loginUser.getUsername());
-        return "login successful!";
+        return "login successfully!" + JwtUtil.generateToken(loginUser.getUsername()) + "|" + user.get().getUserID();
     }
 }

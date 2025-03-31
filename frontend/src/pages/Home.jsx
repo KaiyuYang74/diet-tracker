@@ -1,264 +1,175 @@
-import { useState } from "react";
-import { PieChart, Pie, Cell, LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip } from "recharts";
+import React, { useState, useEffect } from "react";
 import BaseLayout from "../layouts/BaseLayout";
+import CaloriesCard from "../components/calories/CaloriesCard";
+import RecommendationsCard from "../components/recommendations/RecommendationsCard";
+import CalorieTrendChart from "../components/charts/CalorieTrendChart";
+import WeightChangeChart from "../components/charts/WeightChangeChart";
+import { useAuth } from "../context/AuthContext";
+import api from "../api/axiosConfig";
 import "../styles/theme.css";
 import "../styles/pages/Home.css";
 
-// 色彩定义
-const COLORS = [
-  '#FF3366', // 红色 - 最大值
-  '#FF9500', // 橙色 - 第二
-  '#FFCC00', // 黄色 - 第三
-  '#33CC33', // 绿色 - 最小
-];
-
-// 样例数据
-const initialMealData = [
-  { name: "Breakfast", value: 400 },
-  { name: "Lunch", value: 600 },
-  { name: "Dinner", value: 500 },
-  { name: "Snacks", value: 200 }
-];
-
-const trendData = [
-  { date: "Feb 5", calories: 1800 },
-  { date: "Feb 6", calories: 2000 },
-  { date: "Feb 7", calories: 1900 },
-  { date: "Feb 8", calories: 2200 }
-];
-
-const weightData = [
-  { date: "Feb 5", weight: 68 },
-  { date: "Feb 6", weight: 67.8 },
-  { date: "Feb 7", weight: 67.5 },
-  { date: "Feb 8", weight: 67.2 }
-];
-
 function Home() {
-  // 状态管理
-  const [caloriesToday, setCaloriesToday] = useState(1700);
-  const [selectedMeal, setSelectedMeal] = useState(null);
-  const [hoveredIndex, setHoveredIndex] = useState(null);
-  
-  // 常量
-  const goalCalories = 2000;
-  const exerciseCalories = 0;
-  
-  // 数据处理
-  const processedMealData = processMealData(initialMealData);
-  const totalCalories = processedMealData.reduce((sum, item) => sum + item.value, 0);
+  // 全局状态
+  const [caloriesToday, setCaloriesToday] = useState(0);
+  const [goalCalories, setGoalCalories] = useState(2000);
+  const [exerciseCalories, setExerciseCalories] = useState(0);
+  const [remainingCalories, setRemainingCalories] = useState(0);
+  const [calorieTrendData, setCalorieTrendData] = useState([]);
+  const { currentUser } = useAuth(); 
+  const [userData, setUserData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-  // 计算体重图表范围
-  const getWeightDomain = () => {
-    const weights = weightData.map(d => d.weight);
-    const min = Math.min(...weights);
-    const max = Math.max(...weights);
-    const padding = (max - min) * 0.1;
-    return [min - padding, max + padding];
-  };
+  // 加载用户数据
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (currentUser && currentUser.id) {
+        try {
+          setLoading(true);
+          const response = await api.get(`/users/${currentUser.id}`);
+          setUserData(response.data);
+
+          // 计算目标卡路里
+          const userWeight = response.data.weight || 70; // 默认体重70kg
+          const userHeight = response.data.height || 170; // 默认身高170cm
+          const userAge = response.data.age || 30; // 默认年龄30
+          const goalType = response.data.goalType || 'loss'; // 默认目标类型
+
+          // 计算BMR (基础代谢率 - Mifflin-St Jeor公式)
+          const bmr = (10 * userWeight) + (6.25 * userHeight) - (5 * userAge) + 5;
+
+          // 计算TDEE (总能量消耗 - 活动系数1.55)
+          const tdee = bmr * 1.55;
+
+          // 根据目标类型调整卡路里目标
+          let calculatedGoalCalories;
+          switch(goalType) {
+            case 'loss':
+              calculatedGoalCalories = Math.round(tdee - 500); // 减重目标
+              break;
+            case 'gain':
+              calculatedGoalCalories = Math.round(tdee + 300); // 增重目标
+              break;
+            case 'muscle':
+              calculatedGoalCalories = Math.round(tdee); // 增肌目标
+              break;
+            default:
+              calculatedGoalCalories = Math.round(tdee);
+          }
+
+          console.log("计算的目标卡路里:", calculatedGoalCalories, "基于:", {weight: userWeight, height: userHeight, age: userAge, goal: goalType});
+          setGoalCalories(calculatedGoalCalories);
+
+          // 使用计算出的目标卡路里加载今日卡路里摄入
+          await fetchTodayCalories(calculatedGoalCalories);
+
+        } catch (err) {
+          console.error("Failed to fetch user data:", err);
+          setError("无法加载用户数据，请稍后重试");
+        } finally {
+          setLoading(false);
+        }
+      }
+    };
+
+    const fetchTodayCalories = async (calculatedGoal) => {
+      try {
+        // 获取今日日期
+        const today = new Date();
+        const formattedDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+
+        // 获取饮食数据
+        const dietResponse = await api.get(`/diet/input`, {
+          params: { userId: currentUser.id, date: formattedDate }
+        });
+
+        // 计算今日总卡路里摄入
+        let foodCalories = 0;
+        if (dietResponse.data && Array.isArray(dietResponse.data)) {
+          foodCalories = dietResponse.data.reduce((sum, item) => sum + item.calories, 0);
+          setCaloriesToday(foodCalories);
+        } else {
+          setCaloriesToday(0);
+        }
+
+        // 获取运动数据
+        const exerciseResponse = await api.get(`/exercise/input`, {
+          params: { userId: currentUser.id, date: formattedDate }
+        });
+
+        // 计算今日运动消耗
+        let burnedCalories = 0;
+        if (exerciseResponse.data && Array.isArray(exerciseResponse.data)) {
+          burnedCalories = exerciseResponse.data.reduce((sum, item) => sum + item.calories, 0);
+          setExerciseCalories(burnedCalories);
+        } else {
+          setExerciseCalories(0);
+        }
+
+        // 使用传入的计算目标或状态中的目标卡路里
+        const calcGoal = calculatedGoal || goalCalories;
+        // 计算剩余卡路里
+        const remaining = calcGoal - foodCalories + burnedCalories;
+        console.log("计算剩余卡路里:", remaining, "基于:", {goal: calcGoal, food: foodCalories, exercise: burnedCalories});
+        setRemainingCalories(remaining);
+      } catch (err) {
+        console.error("Failed to fetch daily data:", err);
+        setCaloriesToday(0);
+        setExerciseCalories(0);
+        setRemainingCalories(goalCalories);
+      }
+    };
+
+    fetchUserData();
+  }, [currentUser]);
+
+  // 显示加载中状态
+  if (loading) {
+    return (
+      <BaseLayout>
+        <div className="page-container">
+          <div className="loading-state">加载中...</div>
+        </div>
+      </BaseLayout>
+    );
+  }
+
+  // 显示错误状态
+  if (error) {
+    return (
+      <BaseLayout>
+        <div className="page-container">
+          <div className="error-state">{error}</div>
+        </div>
+      </BaseLayout>
+    );
+  }
 
   return (
     <BaseLayout>
       <div className="page-container">
         <div className="grid-layout">
           {/* 今日卡路里卡片 */}
-          <div className="card">
-            <div className="card-header">
-              <h3>Today's Calories</h3>
-            </div>
-            <div className="calories-formula">
-              Remains = Target - Foods + Sports
-            </div>
-            
-            {/* 卡路里环形图 */}
-            <CaloriesRing 
-              current={caloriesToday}
-              goal={goalCalories}
-            />
+          <CaloriesCard 
+            caloriesToday={caloriesToday}
+            goalCalories={goalCalories}
+            exerciseCalories={exerciseCalories}
+            remainingCalories={remainingCalories}
+          />
 
-            {/* 卡路里指标 */}
-            <div className="calories-indicators">
-              <CalorieIndicator label="Base Target" value={goalCalories} />
-              <CalorieIndicator label="Food" value={caloriesToday} />
-              <CalorieIndicator label="Exercise" value={exerciseCalories} />
-            </div>
-          </div>
-
-          {/* 今日摄入分布图 */}
-          <div className="card">
-            <div className="card-header">
-              <h3>Today's Intake</h3>
-            </div>
-            <div className="donut-container">
-              <MealDistributionChart 
-                data={processedMealData}
-                selected={selectedMeal}
-                hoveredIndex={hoveredIndex}
-                onSelect={setSelectedMeal}
-                onHover={setHoveredIndex}
-                totalCalories={totalCalories}
-              />
-            </div>
-          </div>
+          {/* AI推荐 */}
+          {currentUser && <RecommendationsCard userId={currentUser.id} />}
 
           {/* 卡路里趋势图 */}
-          <div className="card">
-            <div className="card-header">
-              <h3>Calorie Trend</h3>
-            </div>
-            <div className="chart-container">
-              <ResponsiveContainer>
-                <LineChart data={trendData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="date" />
-                  <YAxis />
-                  <Tooltip />
-                  <Line type="monotone" dataKey="calories" stroke="#82ca9d" />
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
+          <CalorieTrendChart goalCalories={goalCalories} />
 
           {/* 体重变化图 */}
-          <div className="card">
-            <div className="card-header">
-              <h3>Weight Change</h3>
-            </div>
-            <div className="chart-container">
-              <ResponsiveContainer>
-                <LineChart data={weightData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="date" />
-                  <YAxis domain={getWeightDomain()} />
-                  <Tooltip />
-                  <Line type="monotone" dataKey="weight" stroke="#FF8042" />
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
+          <WeightChangeChart />
         </div>
       </div>
     </BaseLayout>
   );
-}
-
-// 子组件定义
-const CaloriesRing = ({ current, goal }) => (
-  <div className="calories-ring-container">
-    <svg className="calories-ring" viewBox="0 0 200 200">
-      <circle
-        className="ring-background"
-        cx="100" cy="100" r="90"
-        fill="none" strokeWidth="8"
-      />
-      <circle
-        className="ring-progress"
-        cx="100" cy="100" r="90"
-        fill="none" strokeWidth="8"
-        strokeDasharray={`${2 * Math.PI * 90}`}
-        strokeDashoffset={2 * Math.PI * 90 * (1 - Math.min(current / goal, 1))}
-        style={{ stroke: current <= goal ? '#82ca9d' : '#ff7875' }}
-      />
-      {current > goal && (
-        <circle
-          className="ring-overflow"
-          cx="100" cy="100" r="90"
-          fill="none" strokeWidth="8"
-          strokeDasharray={`${2 * Math.PI * 90}`}
-          strokeDashoffset={2 * Math.PI * 90 * (2 - current / goal)}
-          style={{ stroke: '#ff7875' }}
-        />
-      )}
-    </svg>
-    <div className="calories-text">
-      <div className="current-calories">{current}</div>
-      <div className="goal-calories">of {goal} kcal</div>
-    </div>
-  </div>
-);
-
-const CalorieIndicator = ({ label, value }) => (
-  <div className="indicator">
-    <span className="indicator-label">{label}</span>
-    <span className="indicator-value">{value}</span>
-  </div>
-);
-
-const MealDistributionChart = ({ data, selected, hoveredIndex, onSelect, onHover, totalCalories }) => (
-  <div className="donut-wrapper">
-    <PieChart width={300} height={300}>
-      <defs>
-        {COLORS.map((color, index) => (
-          <radialGradient
-            key={`gradient-${index}`}
-            id={`gradient-${index}`}
-            cx="50%" cy="50%" r="50%" fx="50%" fy="50%"
-          >
-            <stop offset="0%" stopColor={color} stopOpacity={1} />
-            <stop offset="100%" stopColor={color} stopOpacity={0.8} />
-          </radialGradient>
-        ))}
-      </defs>
-
-      <Pie
-        data={data}
-        cx="50%" cy="50%"
-        innerRadius={75}
-        outerRadius={95}
-        paddingAngle={2}
-        dataKey="value"
-        onClick={(_, index) => onSelect(data[index])}
-        onMouseEnter={(_, index) => onHover(index)}
-        onMouseLeave={() => onHover(null)}
-      >
-        {data.map((_, index) => (
-          <Cell
-            key={`cell-${index}`}
-            fill={`url(#gradient-${index})`}
-            className="donut-segment"
-            style={{
-              transform: hoveredIndex === index ? 'scale(1.05)' : 'scale(1)',
-              transformOrigin: 'center',
-            }}
-          />
-        ))}
-      </Pie>
-    </PieChart>
-    
-    {selected && (
-      <div className="donut-center-content">
-        <div className="meal-name">{selected.name}</div>
-        <div className="calorie-divider" />
-        <div className="calorie-value">
-          <span className="value" style={{ color: selected.color }}>
-            {selected.value}
-          </span>
-          <span className="unit">kcal</span>
-        </div>
-        <div className="percentage">
-          <span className="value" style={{ color: selected.color }}>
-            {Math.round((selected.value / totalCalories) * 100)}
-          </span>
-          <span>%</span>
-        </div>
-      </div>
-    )}
-  </div>
-);
-
-// 辅助函数
-function processMealData(data) {
-  const total = data.reduce((sum, item) => sum + item.value, 0);
-  return data
-    .map(item => ({
-      ...item,
-      percentage: (item.value / total) * 100
-    }))
-    .sort((a, b) => b.percentage - a.percentage)
-    .map((item, index) => ({
-      ...item,
-      color: COLORS[index]
-    }));
 }
 
 export default Home;

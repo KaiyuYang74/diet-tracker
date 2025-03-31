@@ -1,31 +1,67 @@
-/* 运动记录为空时的样式 */
+/* Exercise界面特定样式 */
+.exercise-log {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+}
+
 .exercise-log.empty {
   text-align: center;
   padding: var(--space-6);
   background: var(--neutral-50);
   border-radius: var(--radius-md);
-  margin-top: var(--space-4);
-}
-
-.exercise-log.empty p {
   color: var(--neutral-600);
-  margin-bottom: var(--space-4);
 }
 
-/* 数据值的特殊布局 */
-.data-value {
+/* 运动记录项目样式 */
+.exercise-item {
   display: flex;
-  gap: var(--space-4);
+  justify-content: space-between;
+  align-items: center;
+  background: var(--neutral-50);
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
 }
 
-/* 文本区域的特殊样式 */
-textarea.form-input {
-  resize: vertical;
-  min-height: 100px;
+.exercise-info {
+  flex-grow: 1;
 }
 
-/* 完成按钮样式 */
-.complete-btn {
+.exercise-name {
+  font-weight: 500;
+  color: var(--neutral-900);
+}
+
+.exercise-details {
+  font-size: 0.9rem;
+  color: var(--neutral-600);
+  margin-top: var(--space-1);
+}
+
+/* 运动输入表单样式 */
+.exercise-input-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4);
+}
+
+.input-group {
+  display: flex;
+  gap: var(--space-3);
+}
+
+.input-group .form-input {
+  flex: 1;
+}
+
+.add-exercise-btn {
   width: 100%;
-  margin-top: var(--space-4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
 }
+
+/* 原summary样式已移除，现在使用theme.css中的data-row样式 */

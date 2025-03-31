@@ -1,11 +1,20 @@
-// Index.jsx
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 import BaseLayout from "../layouts/BaseLayout";
 import "../styles/auth.css";
 import "../styles/pages/Index.css";
 
 function Index() {
   const navigate = useNavigate();
+  const { isAuthenticated, logout } = useAuth();
+
+  // 如果已登录，强制登出
+  useEffect(() => {
+    if (isAuthenticated) {
+      logout();
+    }
+  }, [isAuthenticated, logout]);
 
   return (
     <BaseLayout>

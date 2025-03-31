@@ -9,7 +9,7 @@
 
 /* 营养项目样式 */
 .nutrition-item {
-  padding: var(--space-4);
+  padding: var(--space-3) var(--space-4);
   background: var(--neutral-50);
   border-radius: var(--radius-md);
   margin-bottom: var(--space-3);
@@ -44,6 +44,7 @@
 .item-header {
   display: flex;
   justify-content: space-between;
+  width: 100%;
   align-items: center;
   margin-bottom: var(--space-2);
 }
@@ -179,26 +180,54 @@
   background-color: var(--primary-light);
 }
 
-/* 编辑面板样式 */
-.editor-panel {
-  background: var(--white);
-  border-radius: var(--radius-md);
-  padding: var(--space-4);
-  margin: var(--space-4) 0;
-  border: 1px solid var(--neutral-200);
-}
-
-.editor-panel h4 {
+/* 营养项目标题和值的布局 */
+.nutrient-label {
   color: var(--neutral-700);
-  margin-bottom: var(--space-4);
-  font-size: 1rem;
 }
 
-.editor-grid {
+.nutrient-values {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  gap: var(--space-4);
-  margin-bottom: var(--space-4);
+  grid-template-columns: 50px 50px; /* 固定两列宽度：一列给百分比，一列给克数 */
+  text-align: right;
+}
+
+.nutrient-percentage {
+  color: var(--primary);
+  font-weight: 500;
+}
+
+.nutrient-amount {
+  color: var(--neutral-900);
+  font-weight: 500;
+}
+
+
+/* 操作按钮布局 */
+.action-buttons {
+  display: flex;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+  justify-content: flex-end;
+}
+
+.action-buttons .btn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+}
+
+.total-percentage {
+  margin-top: var(--space-3);
+  text-align: right;
+  font-size: 0.9rem;
+  color: var(--neutral-600);
+}
+
+/* 警告文本 */
+.warning {
+  color: #ff4d4f;
+  margin-left: var(--space-2);
 }
 
 /* 百分比输入组件样式 */
@@ -240,13 +269,28 @@
   font-size: 0.9rem;
 }
 
-.total-percentage {
-  text-align: right;
-  font-size: 0.9rem;
-  color: var(--neutral-600);
+
+/* 统一的编辑输入框样式 */
+.edit-input .input-group {
+  width: 100px;
+  position: relative;
 }
 
-.warning {
-  color: #ff4d4f;
-  margin-left: var(--space-2);
+.edit-input input {
+  width: 100%;
+  padding: var(--space-1) var(--space-2);
+  padding-right: 25px;
+  border: 1px solid var(--neutral-300);
+  border-radius: var(--radius-sm);
+  text-align: right;
+  color: var(--primary);
+  font-weight: 500;
+}
+
+.edit-input .input-suffix {
+  position: absolute;
+  right: var(--space-2);
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--primary);
 }

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import BaseLayout from "../layouts/BaseLayout";
 import { AlertCircle, Bell, Globe, Lock, Moon, Shield, UserCog } from 'lucide-react';
 import "../styles/theme.css";
@@ -36,6 +37,7 @@ function Settings() {
       [key]: value
     }));
   };
+  const navigate = useNavigate();
 
   return (
     <BaseLayout>
@@ -222,7 +224,7 @@ function Settings() {
               </h3>
             </div>
             <div className="settings-group">
-              <button className="btn btn-secondary">
+              <button className="btn btn-secondary" onClick={() => navigate("/password-change")}>
                 Change Password
               </button>
               <button className="btn btn-danger">

@@ -1,20 +1,22 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import BaseLayout from "../layouts/BaseLayout";
+import { useAuth } from "../context/AuthContext";
 import "../styles/auth.css";
 import "../styles/pages/Register.css";
 
 function Register() {
     const navigate = useNavigate();
-
+    const { register } = useAuth();
 
     const [formData, setFormData] = useState({
         username: "",
         email: "",
         password: "",
     });
-
+    
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState("");
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -30,39 +32,26 @@ function Register() {
 
         // 基本表单验证
         if (!formData.username || !formData.email || !formData.password) {
-            alert("请填写所有必填字段");
+            setError("请填写所有必填字段");
             return;
         }
+        
+        setLoading(true);
+        setError("");
+        
         try {
-            const response = await axios.post(
-                "http://localhost:8080/api/auth/register",
-                {
-                    username: formData.username,
-                    email: formData.email,
-                    password: formData.password,
-                }
-            );
-
-
-            if (response.data === "Email has been taken") {
-                alert("Email has been taken");
-
-            } else if (response.data === "Username already taken!") {
-                alert("Username already taken!");
-
-            } else {
-                alert(response.data);
+            const success = await register(formData);
+            
+            if (success) {
                 navigate("/set-goal");
+            } else {
+                setError("注册失败，用户名或邮箱可能已存在");
             }
         } catch (error) {
             console.error("Register failed:", error);
-            if (error.response) {
-                console.error("Status code:", error.response.status);
-                console.error("Return data:", error.response.data);
-                alert(`Register failed: ${error.response.data}`);
-            } else {
-                alert("Register failed, please check the console log.");
-            }
+            setError("注册失败，请稍后重试");
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -71,15 +60,29 @@ function Register() {
             <div className="auth-container bg-login">
                 <div className="auth-box">
                     <h1>Register</h1>
+                    
+                    {error && (
+                      <div className="auth-error" style={{
+                        color: '#d32f2f',
+                        backgroundColor: '#ffebee',
+                        padding: '10px',
+                        borderRadius: '10px',
+                        marginBottom: '15px'
+                      }}>
+                        {error}
+                      </div>
+                    )}
+                    
                     <form className="auth-form" onSubmit={handleRegister}>
                         <input
                             type="text"
                             name="username"
                             placeholder="Name"
                             className="auth-input"
-                            value={formData.name}
+                            value={formData.username}
                             onChange={handleChange}
                             required
+                            disabled={loading}
                         />
                         <input
                             type="email"
@@ -89,6 +92,7 @@ function Register() {
                             value={formData.email}
                             onChange={handleChange}
                             required
+                            disabled={loading}
                         />
                         <input
                             type="password"
@@ -98,14 +102,19 @@ function Register() {
                             value={formData.password}
                             onChange={handleChange}
                             required
+                            disabled={loading}
                         />
                         <p className="privacy-policy">
                             By signing up you agree with the{" "}
                             <a href="#">Privacy policy</a> and{" "}
                             <a href="#">Terms</a> of NutriMatrix
                         </p>
-                        <button type="submit" className="auth-btn">
-                            Get started
+                        <button 
+                          type="submit" 
+                          className="auth-btn"
+                          disabled={loading}
+                        >
+                            {loading ? "注册中..." : "Get started"}
                         </button>
                     </form>
                     <p className="login-link">

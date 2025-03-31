@@ -1,0 +1,77 @@
+/* styles/pages/NotFound.css */
+.not-found-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    padding: 20px;
+    font-family: 'Arial', sans-serif;
+}
+
+.error-content {
+    text-align: center;
+    max-width: 800px;
+}
+
+h1 {
+    font-size: 6rem;
+    margin: 0;
+    color: #2b2d42;
+    letter-spacing: 4px;
+}
+
+h2 {
+    font-size: 1.8rem;
+    color: #4a4e69;
+    margin: 15px 0;
+}
+
+.home-button {
+    display: inline-block;
+    padding: 12px 30px;
+    margin: 25px 0;
+    background: #457b9d;
+    color: white;
+    text-decoration: none;
+    border-radius: 30px;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+.home-button:hover {
+    background: #1d3557;
+    transform: translateY(-2px);
+}
+
+.wisdom-section {
+    margin-top: 30px;
+    padding: 25px;
+    background: rgba(255,255,255,0.95);
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+}
+
+.wisdom-section h3 {
+    color: #2a9d8f;
+    margin-bottom: 20px;
+    font-size: 1.4rem;
+}
+
+.wisdom-section ul {
+    list-style: none;
+    padding: 0;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.quote-box {
+    padding: 15px;
+    margin: 12px 0;
+    background: #f8f9fa;
+    border-left: 4px solid #2a9d8f;
+    border-radius: 4px;
+    text-align: left;
+    font-style: italic;
+    color: #4a4e69;
+}
