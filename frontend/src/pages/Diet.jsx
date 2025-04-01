@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import BaseLayout from "../layouts/BaseLayout";
-import { Edit2, Plus, Trash2 } from 'lucide-react';
+import { Edit2, Plus, Trash2, RefreshCw } from 'lucide-react';
 import { useDiet } from "../context/DietContext";
 import DateNavigation from "../components/DateNavigation";
 import { useDietInputAPI } from "../api/dietInput"; // 更新API导入
+import { useWaterIntakeAPI } from "../api/waterIntake"; //water intake
 import api from "../api/axiosConfig";
 import "../styles/theme.css";
 import "../styles/pages/Diet.css";
@@ -18,6 +19,7 @@ function Diet() {
   const { meals, setMeals, removeFood, calculateMealTotals, calculateDailyTotals } = useDiet();
   const location = useLocation();
   const dietInputAPI = useDietInputAPI(); // 使用API钩子
+  const waterIntakeAPI = useWaterIntakeAPI(); // Use the water intake API
   
   const [currentDate, setCurrentDate] = useState(() => {
     const dateParam = new URLSearchParams(location.search).get('date');
@@ -74,6 +76,14 @@ function Diet() {
         } else {
           console.log("No diet data found for this date or data is not in expected format");
         }
+
+        const waterData = await waterIntakeAPI.getUserWaterIntakeByDate(formattedDate);
+        if (waterData && waterData.amount !== undefined) {
+          setWaterIntake(waterData.amount);
+        } else {
+          setWaterIntake(0);
+        }
+        
       } catch (error) {
         console.error("Error fetching diet data:", error);
         // setError("Could not load your diet data. Please try again.");
@@ -83,6 +93,8 @@ function Diet() {
     };
 
     fetchDietData();
+
+
   }, [currentDate]);
 
   // 添加此useEffect用于计算目标卡路里
@@ -193,15 +205,38 @@ function Diet() {
     return result;
   };
 
-  const handleAddWater = (amount) => {
-    setWaterIntake(prev => Math.min(prev + amount, 4000));
+  const handleAddWater = async (amount) => {
+    // setWaterIntake(prev => Math.min(prev + amount, 4000));
+    const newAmount = Math.min(waterIntake + amount, 4000);
+    setWaterIntake(newAmount);
+    
+    try {
+      const formattedDate = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}`;
+      await waterIntakeAPI.saveWaterIntake(newAmount, formattedDate);
+    } catch (error) {
+      console.error("Failed to save water intake:", error);
+      setError("Failed to save water intake. Please try again.");
+    }
   };
 
-  const handleCustomWaterAdd = () => {
+  const handleCustomWaterAdd = async () => {
     const amount = parseInt(customAmount);
     if (!isNaN(amount) && amount > 0) {
-      setWaterIntake(prev => Math.min(prev + amount, 4000));
+      // setWaterIntake(prev => Math.min(prev + amount, 4000));
+      await handleAddWater(amount);
       setCustomAmount('');
+    }
+  };
+
+  const handleResetWater = async () => {
+    setWaterIntake(0);
+    
+    try {
+      const formattedDate = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(currentDate.getDate()).padStart(2, '0')}`;
+      await waterIntakeAPI.saveWaterIntake(0, formattedDate);
+    } catch (error) {
+      console.error("Failed to reset water intake:", error);
+      setError("Failed to reset water intake. Please try again.");
     }
   };
 
@@ -355,8 +390,12 @@ function Diet() {
               <div className="card water-card">
                 <div className="card-header">
                   <h3>Water Intake</h3>
-                  <button className="btn-icon">
-                    <Edit2 size={18} />
+                  <button 
+                  className="btn-icon" 
+                  onClick={handleResetWater} 
+                  title="Reset water intake"
+                  >
+                    <RefreshCw size={18} />
                   </button>
                 </div>
 
