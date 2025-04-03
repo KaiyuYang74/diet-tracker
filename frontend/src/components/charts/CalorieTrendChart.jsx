@@ -71,18 +71,17 @@ const CalorieTrendChart = ({ goalCalories = 2000 }) => {
   }, []);
 
   // 计算合适的Y轴范围
-// 计算合适的Y轴范围
-const getYAxisDomain = () => {
-  if (calorieData.length === 0) return [0, goalCalories * 1.2];
-  
-  const maxCalories = Math.max(
-    Math.max(...calorieData.map(d => d.calories)), 
-    goalCalories
-  );
-  
-  // 上限设为最大值的1.2倍，确保柱子和目标线都能完整显示
-  return [0, Math.ceil(maxCalories * 1.2)];
-};
+  const getYAxisDomain = () => {
+    if (calorieData.length === 0) return [0, goalCalories * 1.2];
+    
+    const maxCalories = Math.max(
+      Math.max(...calorieData.map(d => d.calories)), 
+      goalCalories
+    );
+    
+    // 上限设为最大值的1.2倍，确保柱子和目标线都能完整显示
+    return [0, Math.ceil(maxCalories * 1.2)];
+  };
 
   return (
     <div className="card">
@@ -111,27 +110,25 @@ const getYAxisDomain = () => {
             <BarChart data={calorieData}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="date" />
-              <YAxis domain={getYAxisDomain()} />
+              <YAxis 
+                domain={getYAxisDomain()} 
+                tickCount={5}  // 设置最多显示5个刻度
+                interval="preserveStartEnd"  // 保留首尾刻度
+              />
               <Tooltip 
                 formatter={(value) => [`${value} kcal`, 'Calories']}
                 labelFormatter={(label) => `Date: ${label}`}
               />
-              {/* 添加目标线 */}
               <ReferenceLine 
                 y={goalCalories} 
                 stroke="red" 
                 strokeDasharray="3 3" 
-                // label={{
-                //   position: 'insideTopRight', 
-                //   value: `Goal: ${goalCalories}`, 
-                //   fill: 'red'
-                // }} 
               />
               <Bar 
                 dataKey="calories" 
                 fill="#82ca9d" 
                 name="Calories" 
-                radius={[4, 4, 0, 0]} // 设置柱状图顶部为圆角
+                radius={[4, 4, 0, 0]}
               />
             </BarChart>
           </ResponsiveContainer>

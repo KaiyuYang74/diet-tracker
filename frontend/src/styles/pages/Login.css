@@ -7,6 +7,7 @@
 }
 
 .form-options label {
+  white-space: nowrap;
   display: flex;
   align-items: center;
   gap: 5px;

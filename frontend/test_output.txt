@@ -1,0 +1,38 @@
+[login] Login successful
+[home] Loaded /home page successfully
+[home] Waited for page to load
+[home] Clicked AI recommend button
+[home] Waited for pie chart to render
+[home] Moved to breakfast sector center
+[home] Clicked breakfast sector
+[home] Percentage value appeared
+[home] Recommended food items appeared
+[home] Recorded calorie indicators: {'Base Target': '2575', 'Food': '440', 'Exercise': '250', 'Remaining': '2385'}
+[home] Weight chart is visible
+[home] Added today's weight: 52.1kg
+[diet] Loaded /diet page successfully
+[diet] Found 'Add Food' button in Lunch
+[diet] Navigated to /food-search page
+[diet] Search input field found
+[diet] Performed search for 'chicken'
+[diet] Clicked on first food search result
+[diet] Returned to /diet page after adding food
+[diet] Confirmed 'chicken' appears under Lunch
+[exercise] Loaded /exercise page successfully
+[exercise] Default selected exercise type is 'cardio'
+[exercise] Successfully switched to 'strength' type and header appeared
+[exercise] Found exercise input fields
+[exercise] Submitted new strength exercise: TestStrength760
+[exercise] New strength exercise 'TestStrength760' found on page
+[exercise] Found 'Daily Exercise Summary' section
+[exercise] Found both 'Total Calories Burned' and 'Weekly Goal' labels
+[home_verify] Returned to /home page
+[home_verify] Waiting for data to load
+[home_verify] Food calories updated: 528
+[home_verify] Exercise calories updated: 300
+[home_verify] Weight chart is still displayed after updates
+[profile] Navigated to /profile via avatar menu
+[profile] Found height, currentWeight, targetWeight, and goal buttons
+[profile] Successfully saved profile without DOB
+[profile] Returned to /home by clicking logo
+[profile] Verified height, weight, targetWeight persisted after reload
