@@ -106,13 +106,22 @@ const WeightChangeChart = () => {
   
   // 计算体重图表范围
   const getWeightDomain = () => {
-    if (weightData.length === 0) return [50, 100];
+    if (weightData.length === 0) return [50, 80]; // 默认范围
     
     const weights = weightData.map(d => d.weight);
     const min = Math.min(...weights);
     const max = Math.max(...weights);
-    const padding = Math.max(1, (max - min) * 0.1);
-    return [Math.max(0, min - padding), max + padding];
+    
+    // 确保最小值和最大值之间至少有5kg的差距，以便图表显示更清晰
+    const range = Math.max(5, max - min);
+    
+    // 添加上下边距
+    const padding = range * 0.1;
+    
+    return [
+      Math.max(0, Math.floor(min - padding)), // 向下取整
+      Math.ceil(max + padding) // 向上取整
+    ];
   };
 
   return (

@@ -89,8 +89,11 @@ function Exercise() {
                 <h3>{type.name}</h3>
                 <div className="header-actions">
                   <span className="target-calories">
-                    Total: {calculateTypeCalories(type.id)} / 
-                    {type.targetCalories ? `${type.targetCalories} kcal` : `${type.targetSessions} sessions`}
+                    {type.id === 'strength' ? (
+                      `${exercises[type.id]?.length || 0} / ${type.targetSessions} sessions`
+                    ) : (
+                      `${calculateTypeCalories(type.id)} / ${type.targetCalories} kcal`
+                    )}
                   </span>
                 </div>
               </div>
@@ -108,7 +111,7 @@ function Exercise() {
                       <div className="exercise-info">
                         <div className="exercise-name">{exercise.name}</div>
                         <div className="exercise-details">
-                          {exercise.duration} min, {exercise.calories} kcal
+                          {exercise.duration} min{type.id === 'cardio' ? `, ${exercise.calories} kcal` : ''}
                         </div>
                       </div>
                       <button 

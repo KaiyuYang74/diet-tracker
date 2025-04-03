@@ -62,6 +62,7 @@ const MealDistributionChart = ({
               key={`cell-${index}`}
               fill={entry.color}
               className="donut-segment"
+              data-testid={`meal-sector-${entry.name.toLowerCase()}`}
               style={{
                 transform: hoveredIndex === index ? 'scale(1.05)' : 'scale(1)',
                 transformOrigin: 'center',
