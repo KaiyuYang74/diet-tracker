@@ -79,6 +79,23 @@ coverage/
 /target
 .DS_Store
 
+# Test related files
+__pycache__/
+*/__pycache__/
+*/*/__pycache__/
+*.pyc
+test_output.txt
+test_screenshot.png
+tests/__pycache__/
+tests/*/__pycache__/
+tests/*/*/__pycache__/
+tests/screenshots/
+tests/output/
+frontend/test_output.txt
+frontend/test_screenshot.png
+frontend/tests/__pycache__/
+frontend/tests/*/__pycache__/
+frontend/tests/*/*/__pycache__/
 
 # 忽略 application.properties 配置文件
 src/main/resources/application.properties
