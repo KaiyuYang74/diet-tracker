@@ -17,8 +17,8 @@ import java.util.Random;
 import java.util.stream.Collectors;
 
 /**
- * 确保在项目中已加载 OR-Tools 的 native 动态库,
- * 例如在 main 函数或配置类中调用: Loader.loadNativeLibraries();
+ * Ensure that the OR-Tools native library is loaded in the project.
+ * For example, call Loader.loadNativeLibraries() in the main method or configuration class.
  */
 
 /*
@@ -33,12 +33,12 @@ public class LossWeightDietService {
     @Autowired
     private FoodRepository foodRepository;
 
-    private static final int[] MEALS = { 0, 1, 2 }; // 三餐编码: 0=早餐,1=午餐,2=晚餐
-    private static final double ALPHA = 0.1; // 重复使用的惩罚系数(示例)
-    private static final double TARGET_PROTEIN_RATIO = 0.2; // 蛋白质占比 20%
-    private static final double TARGET_CARBS_RATIO = 0.5; // 碳水占比 50%
-    private static final double TARGET_FAT_RATIO = 0.3; // 脂肪占比 30%
-    private static final long STAGE2_TIMEOUT_MS = 10000; // 10秒超时
+    private static final int[] MEALS = { 0, 1, 2 }; // Meal codes: 0=breakfast, 1=lunch, 2=dinner
+    private static final double ALPHA = 0.1; // Penalty factor for repeated usage (example)
+    private static final double TARGET_PROTEIN_RATIO = 0.2; // 20% protein ratio
+    private static final double TARGET_CARBS_RATIO = 0.5; // 50% carbohydrate ratio
+    private static final double TARGET_FAT_RATIO = 0.3; // 30% fat ratio
+    private static final long STAGE2_TIMEOUT_MS = 10000; // 10-second timeout
 
     /**
      * 主入口：根据用户传入的体重、身高和年龄，计算 TDEE (BMR * 1.55)，再减 500 得到 calorieTarget。
@@ -46,24 +46,24 @@ public class LossWeightDietService {
      * 若无解，返回 null。
      */
     public List<List<String>> mealPlanRecommendation(double weight, double height, int age) {
-        // 1. 计算 BMR (Mifflin-St Jeor, 男性版本)
+        // 1. Calculate BMR (Mifflin-St Jeor, male version)
         double bmr = (10 * weight) + (6.25 * height) - (5 * age) + 5;
 
-        // 2. 固定活动系数 = 1.55
+        // 2. Fixed activity factor = 1.55
         double tdee = bmr * 1.55;
 
-        // 3. 最终卡路里目标 = TDEE - 500
+        // 3. Final calorie target = TDEE - 500
         double calorieTarget = tdee - 500;
 
         System.out.println("Computed BMR=" + bmr + ", TDEE=" + tdee + ", final calorieTarget=" + calorieTarget);
 
-        // =========== 以下为原先逻辑不变 ===========
+        // =========== The following logic remains unchanged ===========
 
-        // 读取全部食物
+        // Read all foods
         List<Food> allFoods = foodRepository.findAll();
         System.out.println("Current food database size: " + allFoods.size());
 
-        // 根据 category 分组
+        // Group by category
         List<Food> meats = allFoods.stream()
                 .filter(f -> "meats".equalsIgnoreCase(f.getCategory()))
                 .collect(Collectors.toList());
@@ -77,7 +77,7 @@ public class LossWeightDietService {
                 .filter(f -> "others".equalsIgnoreCase(f.getCategory()))
                 .collect(Collectors.toList());
 
-        // 第1阶段：只考虑热量约束
+        // Stage 1: only consider calorie constraints
         System.out.println("Stage 1: Simplified optimization");
         ModelData simplifiedModel = buildSimplifiedProblem(
                 meats, vegs, carbs, others,
@@ -92,7 +92,7 @@ public class LossWeightDietService {
         System.out.println("Stage 1 results: Found " + firstStageSolutions.size() + " solutions");
 
         if (firstStageSolutions.isEmpty()) {
-            // 尝试放宽约束 - 允许重复食物
+            // Attempt to relax constraints - allow repeated foods
             System.out.println("Attempting to relax Stage 1 constraints - allowing repeated foods");
             simplifiedModel = buildSimplifiedProblem(
                     meats, vegs, carbs, others,
@@ -108,11 +108,11 @@ public class LossWeightDietService {
         }
 
         if (!firstStageSolutions.isEmpty()) {
-            // 第2阶段：在第一阶段解的基础上优化营养素比例
+            // Stage 2: optimize nutrient ratios based on stage 1 solutions
             System.out.println("Starting Stage 2 optimization: Nutrient ratios");
             List<List<List<String>>> finalSolutions = new ArrayList<>();
 
-            // 添加超时控制
+            // Add timeout control
             long startTime = System.currentTimeMillis();
 
             for (List<List<String>> baselineSolution : firstStageSolutions) {
@@ -149,16 +149,16 @@ public class LossWeightDietService {
                 Random rand = new Random();
                 return finalSolutions.get(rand.nextInt(finalSolutions.size()));
             } else if (!firstStageSolutions.isEmpty()) {
-                // 如果第二阶段无解，直接返回第一阶段的解
+                // If stage 2 has no solution, return the stage 1 solution
                 System.out.println("No Stage 2 solutions, returning Stage 1 solution instead");
                 Random rand = new Random();
                 return firstStageSolutions.get(rand.nextInt(firstStageSolutions.size()));
             }
         }
 
-        // 若两阶段失败，则直接回退到单阶段方式
+        // If both stages fail, revert to a single-stage approach
 
-        // (1) 尝试硬约束 "不重复"
+        // (1) Try a strict no-repeat constraint
         ModelData modelData1 = buildDailyMealProblem(
                 meats, vegs, carbs, others,
                 calorieTarget,
@@ -177,7 +177,7 @@ public class LossWeightDietService {
             return solutions1.get(rand.nextInt(solutions1.size()));
         }
 
-        // (2) 再尝试软约束
+        // (2) Then try a soft constraint
         ModelData modelData2 = buildDailyMealProblem(
                 meats, vegs, carbs, others,
                 calorieTarget,
@@ -196,7 +196,7 @@ public class LossWeightDietService {
             return solutions2.get(rand.nextInt(solutions2.size()));
         }
 
-        // (3) 最后再去掉所有重复约束
+        // (3) Finally, remove all repeat constraints
         ModelData modelData3 = buildDailyMealProblem(
                 meats, vegs, carbs, others,
                 calorieTarget,
@@ -215,12 +215,12 @@ public class LossWeightDietService {
             return solutions3.get(rand.nextInt(solutions3.size()));
         }
 
-        // 实在无解，返回空
+        // If no solution is found, return empty
         return Collections.emptyList();
     }
 
     /**
-     * 构建第一阶段简化问题 - 只考虑热量约束
+     * Build stage 1 simplified problem - only consider calorie constraints
      */
     private ModelData buildSimplifiedProblem(
             List<Food> meats,
@@ -263,7 +263,7 @@ public class LossWeightDietService {
             xOthers[i] = solver.makeBoolVar("other_" + i);
         }
 
-        // 每餐至少选择1肉+1菜+1碳水
+        // Each meal requires at least one meat, one vegetable, and one carbohydrate
         for (int m : MEALS) {
             MPConstraint cMeat = solver.makeConstraint(1, Double.POSITIVE_INFINITY, "min_meat_" + m);
             for (int i = 0; i < meats.size(); i++) {
@@ -281,13 +281,13 @@ public class LossWeightDietService {
             }
         }
 
-        // 午餐选1个others
+        // Lunch selects one 'others'
         MPConstraint cOther = solver.makeConstraint(1, 1, "one_other");
         for (int i = 0; i < others.size(); i++) {
             cOther.setCoefficient(xOthers[i], 1);
         }
 
-        // 热量约束: [0.95 * calorieTarget, 1.05 * calorieTarget]
+        // Calorie constraint: [0.95 * calorieTarget, 1.05 * calorieTarget]
         MPConstraint cCalLower = solver.makeConstraint(0.95 * calorieTarget, Double.POSITIVE_INFINITY, "cal_lower");
         MPConstraint cCalUpper = solver.makeConstraint(0, 1.05 * calorieTarget, "cal_upper");
 
@@ -314,7 +314,7 @@ public class LossWeightDietService {
             cCalUpper.setCoefficient(xOthers[i], others.get(i).getCaloricValue());
         }
 
-        // 不重复约束
+        // No-repeat constraint
         if (noRepeat) {
             for (int i = 0; i < meats.size(); i++) {
                 MPConstraint c = solver.makeConstraint(0, 1, "meat_" + i + "_once");
@@ -336,7 +336,7 @@ public class LossWeightDietService {
             }
         }
 
-        // 目标：最小化与目标热量差距
+        // Objective: minimize deviation from target calories
         MPObjective objective = solver.objective();
         MPVariable calDev = solver.makeNumVar(0, Double.POSITIVE_INFINITY, "cal_deviation");
         MPConstraint cDevCalPos = solver.makeConstraint(0, Double.POSITIVE_INFINITY, "dev_cal_pos");
@@ -391,7 +391,7 @@ public class LossWeightDietService {
     }
 
     /**
-     * 构建完整问题，优化营养素比例等
+     * Build the full problem to optimize nutrient ratios, etc.
      */
     private ModelData buildDailyMealProblem(
             List<Food> meats,
@@ -411,7 +411,7 @@ public class LossWeightDietService {
                 "DailyMealPlan",
                 MPSolver.OptimizationProblemType.CBC_MIXED_INTEGER_PROGRAMMING);
 
-        // 设置超时时间 - 5秒
+        // Set a 5-second timeout
         solver.setTimeLimit(5000);
 
         MPVariable[][] xMeats = new MPVariable[meats.size()][MEALS.length];
@@ -438,7 +438,7 @@ public class LossWeightDietService {
             xOthers[i] = solver.makeBoolVar("others_" + i);
         }
 
-        // 每餐1肉+1菜+1碳水
+        // Each meal has one meat, one vegetable, and one carbohydrate
         for (int m : MEALS) {
             MPConstraint cMeat = solver.makeConstraint(1, 1, "One_meat_" + m);
             for (int i = 0; i < meats.size(); i++) {
@@ -456,13 +456,13 @@ public class LossWeightDietService {
             }
         }
 
-        // 午餐选 1 others
+        // Lunch selects one 'others'
         MPConstraint cOther = solver.makeConstraint(1, 1, "One_others");
         for (int i = 0; i < others.size(); i++) {
             cOther.setCoefficient(xOthers[i], 1.0);
         }
 
-        // 如果 noRepeat，则同类食材不得重复
+        // If noRepeat is true, do not repeat items from the same category
         if (noRepeat) {
             for (int i = 0; i < meats.size(); i++) {
                 MPConstraint c = solver.makeConstraint(0, 1, "No_repeat_meat_" + i);
@@ -484,7 +484,7 @@ public class LossWeightDietService {
             }
         }
 
-        // 总热量区间 [0.9*calorieTarget, 1.1*calorieTarget] - 放宽到±10%
+        // Total calorie range [0.9 * calorieTarget, 1.1 * calorieTarget] with ±10% flexibility
         double lowerBound = calorieTarget * 0.9;
         double upperBound = calorieTarget * 1.1;
         MPConstraint cTotalCal = solver.makeConstraint(lowerBound, upperBound, "Total_calorie");
@@ -508,7 +508,7 @@ public class LossWeightDietService {
             cTotalCal.setCoefficient(xOthers[i], others.get(i).getCaloricValue());
         }
 
-        // 定义目标：最小化营养素比例偏差
+        // Define the objective: minimize nutrient ratio deviation
         MPObjective objective = solver.objective();
 
         MPVariable totalNutrients = solver.makeNumVar(0, Double.POSITIVE_INFINITY, "total_nutrients");
@@ -597,8 +597,8 @@ public class LossWeightDietService {
         MPVariable carbsRatioDev = solver.makeNumVar(0, Double.POSITIVE_INFINITY, "carbs_ratio_dev");
         MPVariable fatRatioDev = solver.makeNumVar(0, Double.POSITIVE_INFINITY, "fat_ratio_dev");
 
-        // 修改营养素比例约束，将硬性相等约束改为允许一定偏差的范围约束
-        // 设置允许的偏差范围为 ±0.15（这个值可以调整）
+        // Modify nutrient ratio constraints from exact equality to allow some deviation
+        // Set allowed deviation range to ±0.5 (this value can be adjusted)
         double allowedDeviation = 0.5;
 
         MPConstraint cProteinRatioLower = solver.makeConstraint(
@@ -643,7 +643,7 @@ public class LossWeightDietService {
         cFatRatioUpper.setCoefficient(totalFatVar, 1.0);
         cFatRatioUpper.setCoefficient(totalNutrientsVar, -TARGET_FAT_RATIO - allowedDeviation);
 
-        // 保留软约束偏差变量，但降低其在目标函数中的权重
+        // Keep the soft constraint deviation variables but lower their weight in the objective function
         objective.setCoefficient(proteinRatioDev, 0.5); // 从原来的1.0降低
         objective.setCoefficient(carbsRatioDev, 0.5);
         objective.setCoefficient(fatRatioDev, 0.5);
@@ -697,7 +697,7 @@ public class LossWeightDietService {
     }
 
     /**
-     * 枚举多个可行解，最多收集 maxSolutions 个
+     * Enumerate multiple feasible solutions, up to maxSolutions
      */
     private List<List<List<String>>> enumerateSolutions(
             ModelData modelData,
@@ -714,7 +714,7 @@ public class LossWeightDietService {
 
         List<List<List<String>>> solutions = new ArrayList<>();
 
-        // 设置最大迭代次数，避免无限循环
+        // Set a maximum iteration limit to avoid infinite loops
         int maxIterations = 10;
         int iterations = 0;
 
@@ -723,7 +723,7 @@ public class LossWeightDietService {
             ResultStatus status = solver.solve();
             System.out.println("Solver status: " + status);
 
-            // 接受FEASIBLE解作为有效解
+            // Accept FEASIBLE solutions as valid
             if (status != ResultStatus.OPTIMAL && status != ResultStatus.FEASIBLE) {
                 System.out.println(
                         "No optimal solution found, exiting solution enumeration after " + iterations + " iterations");
@@ -736,7 +736,7 @@ public class LossWeightDietService {
             }
             solutions.add(plan);
 
-            // 添加剪切约束，避免得到同样的解
+            // Add a cutting constraint to avoid identical solutions
             List<VarVal> chosenVars = new ArrayList<>();
             for (int i = 0; i < meats.size(); i++) {
                 for (int m : MEALS) {
@@ -781,7 +781,7 @@ public class LossWeightDietService {
     }
 
     /**
-     * 获取 solver 中 0/1 变量对应的三餐食材选择
+     * Retrieve the meal plan from the solver's 0/1 variables
      */
     private List<List<String>> getSolution(
             MPSolver solver,
